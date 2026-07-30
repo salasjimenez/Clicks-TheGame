@@ -1,0 +1,1019 @@
+export const ACHIEVEMENTS = [
+    {
+        "id": "CLICK_1",
+        "name": "¡Primer Paso!",
+        "description": "Haz tu primer clic",
+        "emoji": "👣",
+        "requirement": 1,
+        "reward": 10,
+        "rarity": "common",
+        "category": "clicks"
+    },
+    {
+        "id": "CLICK_10",
+        "name": "Aprendiz de Clics",
+        "description": "Alcanza 10 clics totales",
+        "emoji": "👆",
+        "requirement": 10,
+        "reward": 20,
+        "rarity": "common",
+        "category": "clicks"
+    },
+    {
+        "id": "CLICK_50",
+        "name": "Dedo Ágil",
+        "description": "Alcanza 50 clics totales",
+        "emoji": "🖱️",
+        "requirement": 50,
+        "reward": 30,
+        "rarity": "common",
+        "category": "clicks"
+    },
+    {
+        "id": "CLICK_100",
+        "name": "Centenario",
+        "description": "Alcanza 100 clics totales",
+        "emoji": "💯",
+        "requirement": 100,
+        "reward": 50,
+        "rarity": "uncommon",
+        "category": "clicks"
+    },
+    {
+        "id": "CLICK_200",
+        "name": "Doble Centuria",
+        "description": "Alcanza 200 clics totales",
+        "emoji": "2️⃣0️⃣0️⃣",
+        "requirement": 200,
+        "reward": 75,
+        "rarity": "uncommon",
+        "category": "clicks"
+    },
+    {
+        "id": "CLICK_300",
+        "name": "Tricentenario",
+        "description": "Alcanza 300 clics totales",
+        "emoji": "3️⃣0️⃣0️⃣",
+        "requirement": 300,
+        "reward": 100,
+        "rarity": "uncommon",
+        "category": "clicks"
+    },
+    {
+        "id": "CLICK_400",
+        "name": "Cuadrigentésimo",
+        "description": "Alcanza 400 clics totales",
+        "emoji": "4️⃣0️⃣0️⃣",
+        "requirement": 400,
+        "reward": 125,
+        "rarity": "uncommon",
+        "category": "clicks"
+    },
+    {
+        "id": "CLICK_500",
+        "name": "Quinientos",
+        "description": "Alcanza 500 clics totales",
+        "emoji": "5️⃣0️⃣0️⃣",
+        "requirement": 500,
+        "reward": 150,
+        "rarity": "rare",
+        "category": "clicks"
+    },
+    {
+        "id": "CLICK_600",
+        "name": "Sescentenario",
+        "description": "Alcanza 600 clics totales",
+        "emoji": "6️⃣0️⃣0️⃣",
+        "requirement": 600,
+        "reward": 175,
+        "rarity": "rare",
+        "category": "clicks"
+    },
+    {
+        "id": "CLICK_700",
+        "name": "Septingentésimo",
+        "description": "Alcanza 700 clics totales",
+        "emoji": "7️⃣0️⃣0️⃣",
+        "requirement": 700,
+        "reward": 200,
+        "rarity": "rare",
+        "category": "clicks"
+    },
+    {
+        "id": "CLICK_800",
+        "name": "Octingentésimo",
+        "description": "Alcanza 800 clics totales",
+        "emoji": "8️⃣0️⃣0️⃣",
+        "requirement": 800,
+        "reward": 225,
+        "rarity": "rare",
+        "category": "clicks"
+    },
+    {
+        "id": "CLICK_900",
+        "name": "Noningentésimo",
+        "description": "Alcanza 900 clics totales",
+        "emoji": "9️⃣0️⃣0️⃣",
+        "requirement": 900,
+        "reward": 250,
+        "rarity": "epic",
+        "category": "clicks"
+    },
+    {
+        "id": "CLICK_1000",
+        "name": "¡LEYENDA!",
+        "description": "Alcanza 1000 clics totales",
+        "emoji": "👑",
+        "requirement": 1000,
+        "reward": 500,
+        "rarity": "legendary",
+        "category": "clicks"
+    },
+    {
+        "id": "CLICK_2500",
+        "name": "Dos Mil Quinientos",
+        "description": "Alcanza 2500 clics totales",
+        "emoji": "2️⃣5️⃣0️⃣0️⃣",
+        "requirement": 2500,
+        "reward": 600,
+        "rarity": "epic",
+        "category": "clicks"
+    },
+    {
+        "id": "CLICK_5000",
+        "name": "Cinco Mil",
+        "description": "Alcanza 5000 clics totales",
+        "emoji": "5️⃣0️⃣0️⃣0️⃣",
+        "requirement": 5000,
+        "reward": 800,
+        "rarity": "epic",
+        "category": "clicks"
+    },
+    {
+        "id": "CLICK_10000",
+        "name": "Diez Mil",
+        "description": "Alcanza 10,000 clics totales",
+        "emoji": "🔟0️⃣0️⃣0️⃣",
+        "requirement": 10000,
+        "reward": 1000,
+        "rarity": "legendary",
+        "category": "clicks"
+    },
+    {
+        "id": "CLICK_25000",
+        "name": "Veinticinco Mil",
+        "description": "Alcanza 25,000 clics totales",
+        "emoji": "2️⃣5️⃣0️⃣0️⃣0️⃣",
+        "requirement": 25000,
+        "reward": 1500,
+        "rarity": "legendary",
+        "category": "clicks"
+    },
+    {
+        "id": "CLICK_50000",
+        "name": "Cincuenta Mil",
+        "description": "Alcanza 50,000 clics totales",
+        "emoji": "5️⃣0️⃣0️⃣0️⃣0️⃣",
+        "requirement": 50000,
+        "reward": 2000,
+        "rarity": "mythic",
+        "category": "clicks"
+    },
+    {
+        "id": "CLICK_100000",
+        "name": "Cien Mil",
+        "description": "Alcanza 100,000 clics totales",
+        "emoji": "💯💯",
+        "requirement": 100000,
+        "reward": 3000,
+        "rarity": "mythic",
+        "category": "clicks"
+    },
+    {
+        "id": "CLICK_1000000",
+        "name": "¡UN MILLÓN!",
+        "description": "Alcanza 1,000,000 clics totales",
+        "emoji": "💰💰💰",
+        "requirement": 1000000,
+        "reward": 10000,
+        "rarity": "godly",
+        "category": "clicks"
+    },
+    {
+        "id": "CPS_5",
+        "name": "Rápidos y Furiosos",
+        "description": "Alcanza 5 CPS",
+        "emoji": "⚡",
+        "requirement": 5,
+        "reward": 100,
+        "rarity": "rare",
+        "category": "cps"
+    },
+    {
+        "id": "CPS_10",
+        "name": "Velocidad Relámpago",
+        "description": "Alcanza 10 CPS",
+        "emoji": "⚡⚡",
+        "requirement": 10,
+        "reward": 250,
+        "rarity": "rare",
+        "category": "cps"
+    },
+    {
+        "id": "CPS_20",
+        "name": "Dios del Clic",
+        "description": "Alcanza 20 CPS",
+        "emoji": "⚡⚡⚡",
+        "requirement": 20,
+        "reward": 500,
+        "rarity": "epic",
+        "category": "cps"
+    },
+    {
+        "id": "CPS_50",
+        "name": "Máquina Humana",
+        "description": "Alcanza 50 CPS",
+        "emoji": "🤖⚡",
+        "requirement": 50,
+        "reward": 1000,
+        "rarity": "legendary",
+        "category": "cps"
+    },
+    {
+        "id": "CPS_100",
+        "name": "Velocidad Sobrehumana",
+        "description": "Alcanza 100 CPS",
+        "emoji": "💨⚡",
+        "requirement": 100,
+        "reward": 2000,
+        "rarity": "mythic",
+        "category": "cps"
+    },
+    {
+        "id": "CPS_500",
+        "name": "Dios de la Velocidad",
+        "description": "Alcanza 500 CPS",
+        "emoji": "👑⚡",
+        "requirement": 500,
+        "reward": 5000,
+        "rarity": "godly",
+        "category": "cps"
+    },
+    {
+        "id": "CPS_1000",
+        "name": "La Velocidad de la Luz",
+        "description": "Alcanza 1000 CPS",
+        "emoji": "💫⚡",
+        "requirement": 1000,
+        "reward": 10000,
+        "rarity": "godly",
+        "category": "cps"
+    },
+    {
+        "id": "AUTO_1",
+        "name": "Primer Auto Clicker",
+        "description": "Compra tu primer Auto Clicker",
+        "emoji": "🤖",
+        "requirement": 1,
+        "reward": 100,
+        "rarity": "common",
+        "category": "autoClickers"
+    },
+    {
+        "id": "AUTO_5",
+        "name": "Ejército de Robots",
+        "description": "Ten 5 Auto Clickers",
+        "emoji": "🤖🤖",
+        "requirement": 5,
+        "reward": 250,
+        "rarity": "uncommon",
+        "category": "autoClickers"
+    },
+    {
+        "id": "AUTO_10",
+        "name": "Revolución de las Máquinas",
+        "description": "Ten 10 Auto Clickers",
+        "emoji": "🤖🤖🤖",
+        "requirement": 10,
+        "reward": 500,
+        "rarity": "rare",
+        "category": "autoClickers"
+    },
+    {
+        "id": "AUTO_25",
+        "name": "Ejército Mecánico",
+        "description": "Ten 25 Auto Clickers",
+        "emoji": "⚙️🤖",
+        "requirement": 25,
+        "reward": 1000,
+        "rarity": "epic",
+        "category": "autoClickers"
+    },
+    {
+        "id": "AUTO_50",
+        "name": "Dominación Robótica",
+        "description": "Ten 50 Auto Clickers",
+        "emoji": "🦾🤖",
+        "requirement": 50,
+        "reward": 2000,
+        "rarity": "legendary",
+        "category": "autoClickers"
+    },
+    {
+        "id": "AUTO_100",
+        "name": "Señor de las Máquinas",
+        "description": "Ten 100 Auto Clickers",
+        "emoji": "👑🤖",
+        "requirement": 100,
+        "reward": 5000,
+        "rarity": "mythic",
+        "category": "autoClickers"
+    },
+    {
+        "id": "MULTI_2",
+        "name": "Doble Poder",
+        "description": "Multiplicador x2",
+        "emoji": "2️⃣",
+        "requirement": 2,
+        "reward": 100,
+        "rarity": "common",
+        "category": "multiplier"
+    },
+    {
+        "id": "MULTI_4",
+        "name": "Cuádruple",
+        "description": "Multiplicador x4",
+        "emoji": "4️⃣",
+        "requirement": 4,
+        "reward": 200,
+        "rarity": "uncommon",
+        "category": "multiplier"
+    },
+    {
+        "id": "MULTI_8",
+        "name": "Octuple Poder",
+        "description": "Multiplicador x8",
+        "emoji": "8️⃣",
+        "requirement": 8,
+        "reward": 400,
+        "rarity": "rare",
+        "category": "multiplier"
+    },
+    {
+        "id": "MULTI_16",
+        "name": "Poder Ilimitado",
+        "description": "Multiplicador x16",
+        "emoji": "🔟6️⃣",
+        "requirement": 16,
+        "reward": 800,
+        "rarity": "epic",
+        "category": "multiplier"
+    },
+    {
+        "id": "MULTI_32",
+        "name": "Poder Divino",
+        "description": "Multiplicador x32",
+        "emoji": "💫",
+        "requirement": 32,
+        "reward": 1500,
+        "rarity": "legendary",
+        "category": "multiplier"
+    },
+    {
+        "id": "MULTI_64",
+        "name": "Dios del Poder",
+        "description": "Multiplicador x64",
+        "emoji": "👑⚡",
+        "requirement": 64,
+        "reward": 3000,
+        "rarity": "mythic",
+        "category": "multiplier"
+    },
+    {
+        "id": "PRESTIGE_1",
+        "name": "Renacer",
+        "description": "Realiza tu primer prestigio",
+        "emoji": "🔄",
+        "requirement": 1,
+        "reward": 1000,
+        "rarity": "epic",
+        "category": "prestige"
+    },
+    {
+        "id": "PRESTIGE_5",
+        "name": "Leyenda Renacida",
+        "description": "Realiza 5 prestigios",
+        "emoji": "🔄🔄",
+        "requirement": 5,
+        "reward": 5000,
+        "rarity": "legendary",
+        "category": "prestige"
+    },
+    {
+        "id": "PRESTIGE_10",
+        "name": "Maestro del Prestigio",
+        "description": "Realiza 10 prestigios",
+        "emoji": "🌟🔄",
+        "requirement": 10,
+        "reward": 10000,
+        "rarity": "mythic",
+        "category": "prestige"
+    },
+    {
+        "id": "PRESTIGE_25",
+        "name": "Dios del Renacimiento",
+        "description": "Realiza 25 prestigios",
+        "emoji": "👑🔄",
+        "requirement": 25,
+        "reward": 25000,
+        "rarity": "godly",
+        "category": "prestige"
+    },
+    {
+        "id": "PRESTIGE_50",
+        "name": "Eterno",
+        "description": "Realiza 50 prestigios",
+        "emoji": "♾️🔄",
+        "requirement": 50,
+        "reward": 50000,
+        "rarity": "godly",
+        "category": "prestige"
+    },
+    {
+        "id": "PRESTIGE_100",
+        "name": "La Leyenda Suprema",
+        "description": "Realiza 100 prestigios",
+        "emoji": "🏆🏆🏆",
+        "requirement": 100,
+        "reward": 100000,
+        "rarity": "godly",
+        "category": "prestige"
+    },
+    {
+        "id": "MINIGAME_1",
+        "name": "Jugador Casual",
+        "description": "Juega 1 minijuego",
+        "emoji": "🎮",
+        "requirement": 1,
+        "reward": 50,
+        "rarity": "common",
+        "category": "minigames"
+    },
+    {
+        "id": "MINIGAME_10",
+        "name": "Apasionado",
+        "description": "Juega 10 minijuegos",
+        "emoji": "🎰🎰",
+        "requirement": 10,
+        "reward": 200,
+        "rarity": "uncommon",
+        "category": "minigames"
+    },
+    {
+        "id": "MINIGAME_50",
+        "name": "Adicto al Juego",
+        "description": "Juega 50 minijuegos",
+        "emoji": "🎲🎲🎲",
+        "requirement": 50,
+        "reward": 500,
+        "rarity": "rare",
+        "category": "minigames"
+    },
+    {
+        "id": "MINIGAME_100",
+        "name": "Maestro del Azar",
+        "description": "Juega 100 minijuegos",
+        "emoji": "🎰💎",
+        "requirement": 100,
+        "reward": 1000,
+        "rarity": "epic",
+        "category": "minigames"
+    },
+    {
+        "id": "ROULETTE_JACKPOT",
+        "name": "Rey de la Ruleta",
+        "description": "Consigue el número 0 en la ruleta",
+        "emoji": "🎡0️⃣",
+        "requirement": 1,
+        "reward": 500,
+        "rarity": "legendary",
+        "category": "minigames"
+    },
+    {
+        "id": "SLOT_JACKPOT",
+        "name": "Rey de las Tragamonedas",
+        "description": "Consigue 3 sietes en las tragamonedas",
+        "emoji": "🎰7️⃣7️⃣7️⃣",
+        "requirement": 1,
+        "reward": 500,
+        "rarity": "legendary",
+        "category": "minigames"
+    },
+    {
+        "id": "GUESS_MASTER",
+        "name": "Adivinador Experto",
+        "description": "Acierta 10 veces seguidas en Adivina el Número",
+        "emoji": "🔢🎯",
+        "requirement": 10,
+        "reward": 1000,
+        "rarity": "epic",
+        "category": "minigames"
+    },
+    {
+        "id": "MINIGAME_LEGEND",
+        "name": "Leyenda del Casino",
+        "description": "Juega 500 minijuegos",
+        "emoji": "🎰👑",
+        "requirement": 500,
+        "reward": 5000,
+        "rarity": "mythic",
+        "category": "minigames"
+    },
+    {
+        "id": "MISSION_1",
+        "name": "Primera Misión",
+        "description": "Completa tu primera misión diaria",
+        "emoji": "📋✅",
+        "requirement": 1,
+        "reward": 100,
+        "rarity": "common",
+        "category": "missions"
+    },
+    {
+        "id": "MISSION_5",
+        "name": "Cumplidor",
+        "description": "Completa 5 misiones",
+        "emoji": "📋📋",
+        "requirement": 5,
+        "reward": 300,
+        "rarity": "uncommon",
+        "category": "missions"
+    },
+    {
+        "id": "MISSION_20",
+        "name": "Heroico",
+        "description": "Completa 20 misiones",
+        "emoji": "🦸📋",
+        "requirement": 20,
+        "reward": 800,
+        "rarity": "rare",
+        "category": "missions"
+    },
+    {
+        "id": "MISSION_50",
+        "name": "Leyenda de Misiones",
+        "description": "Completa 50 misiones",
+        "emoji": "🏆📋",
+        "requirement": 50,
+        "reward": 1500,
+        "rarity": "epic",
+        "category": "missions"
+    },
+    {
+        "id": "MISSION_100",
+        "name": "Dios de las Misiones",
+        "description": "Completa 100 misiones",
+        "emoji": "👑📋",
+        "requirement": 100,
+        "reward": 3000,
+        "rarity": "legendary",
+        "category": "missions"
+    },
+    {
+        "id": "MISSION_STREAK_7",
+        "name": "Racha de Campeón",
+        "description": "Completa misiones 7 días seguidos",
+        "emoji": "🔥7️⃣",
+        "requirement": 7,
+        "reward": 2000,
+        "rarity": "epic",
+        "category": "missions"
+    },
+    {
+        "id": "MISSION_STREAK_30",
+        "name": "Racha Legendaria",
+        "description": "Completa misiones 30 días seguidos",
+        "emoji": "🔥3️⃣0️⃣",
+        "requirement": 30,
+        "reward": 10000,
+        "rarity": "mythic",
+        "category": "missions"
+    },
+    {
+        "id": "MISSION_COMPLETE",
+        "name": "Completista",
+        "description": "Completa todas las misiones de un día",
+        "emoji": "✅✅✅",
+        "requirement": 3,
+        "reward": 500,
+        "rarity": "rare",
+        "category": "missions"
+    },
+    {
+        "id": "EVENT_1",
+        "name": "Participante",
+        "description": "Participa en tu primer evento especial",
+        "emoji": "✨",
+        "requirement": 1,
+        "reward": 200,
+        "rarity": "uncommon",
+        "category": "events"
+    },
+    {
+        "id": "EVENT_5",
+        "name": "Fiestero",
+        "description": "Participa en 5 eventos",
+        "emoji": "🎉🎉",
+        "requirement": 5,
+        "reward": 500,
+        "rarity": "rare",
+        "category": "events"
+    },
+    {
+        "id": "EVENT_10",
+        "name": "Cazador de Eventos",
+        "description": "Participa en 10 eventos",
+        "emoji": "🏹✨",
+        "requirement": 10,
+        "reward": 1000,
+        "rarity": "epic",
+        "category": "events"
+    },
+    {
+        "id": "EVENT_25",
+        "name": "Asistente Perfecto",
+        "description": "Participa en 25 eventos",
+        "emoji": "📅✨",
+        "requirement": 25,
+        "reward": 2500,
+        "rarity": "legendary",
+        "category": "events"
+    },
+    {
+        "id": "EVENT_DOUBLE_USE",
+        "name": "Doble Diversión",
+        "description": "Juega durante un evento de Doble Clic",
+        "emoji": "✨✨",
+        "requirement": 1,
+        "reward": 300,
+        "rarity": "rare",
+        "category": "events"
+    },
+    {
+        "id": "EVENT_DISCOUNT_USE",
+        "name": "Comprador Inteligente",
+        "description": "Compra durante un evento de Descuento",
+        "emoji": "🏷️💰",
+        "requirement": 1,
+        "reward": 300,
+        "rarity": "rare",
+        "category": "events"
+    },
+    {
+        "id": "TIME_1H",
+        "name": "Maratoniano",
+        "description": "Juega por 1 hora",
+        "emoji": "⏰",
+        "requirement": 3600,
+        "reward": 300,
+        "rarity": "uncommon",
+        "category": "time"
+    },
+    {
+        "id": "TIME_5H",
+        "name": "Resistente",
+        "description": "Juega por 5 horas",
+        "emoji": "⏰⏰",
+        "requirement": 18000,
+        "reward": 500,
+        "rarity": "rare",
+        "category": "time"
+    },
+    {
+        "id": "TIME_24H",
+        "name": "Adicto",
+        "description": "Juega por 24 horas",
+        "emoji": "💊",
+        "requirement": 86400,
+        "reward": 1000,
+        "rarity": "epic",
+        "category": "time"
+    },
+    {
+        "id": "TIME_100H",
+        "name": "Veterano",
+        "description": "Juega por 100 horas",
+        "emoji": "🎖️",
+        "requirement": 360000,
+        "reward": 2500,
+        "rarity": "legendary",
+        "category": "time"
+    },
+    {
+        "id": "TIME_500H",
+        "name": "Leyenda del Tiempo",
+        "description": "Juega por 500 horas",
+        "emoji": "⌛👑",
+        "requirement": 1800000,
+        "reward": 5000,
+        "rarity": "mythic",
+        "category": "time"
+    },
+    {
+        "id": "TIME_1000H",
+        "name": "Inmortal",
+        "description": "Juega por 1000 horas",
+        "emoji": "♾️⏰",
+        "requirement": 3600000,
+        "reward": 10000,
+        "rarity": "godly",
+        "category": "time"
+    },
+    {
+        "id": "SHOP_1",
+        "name": "Primera Compra",
+        "description": "Compra tu primer item",
+        "emoji": "🛒",
+        "requirement": 1,
+        "reward": 50,
+        "rarity": "common",
+        "category": "shop"
+    },
+    {
+        "id": "SHOP_10",
+        "name": "Cliente Frecuente",
+        "description": "Compra 10 items",
+        "emoji": "🛒🛒",
+        "requirement": 10,
+        "reward": 200,
+        "rarity": "uncommon",
+        "category": "shop"
+    },
+    {
+        "id": "SHOP_25",
+        "name": "Inversor",
+        "description": "Compra 25 items",
+        "emoji": "💼",
+        "requirement": 25,
+        "reward": 500,
+        "rarity": "rare",
+        "category": "shop"
+    },
+    {
+        "id": "SHOP_50",
+        "name": "Magnate",
+        "description": "Compra 50 items",
+        "emoji": "💰💰",
+        "requirement": 50,
+        "reward": 1000,
+        "rarity": "epic",
+        "category": "shop"
+    },
+    {
+        "id": "SHOP_100",
+        "name": "Rey del Comercio",
+        "description": "Compra 100 items",
+        "emoji": "👑💰",
+        "requirement": 100,
+        "reward": 2500,
+        "rarity": "legendary",
+        "category": "shop"
+    },
+    {
+        "id": "SHOP_500",
+        "name": "Dios del Dinero",
+        "description": "Compra 500 items",
+        "emoji": "💎💎💎",
+        "requirement": 500,
+        "reward": 10000,
+        "rarity": "mythic",
+        "category": "shop"
+    },
+    {
+        "id": "SECRET_1",
+        "name": "Click Fantasma",
+        "description": "Alcanza 1000 CPS con auto clickers",
+        "emoji": "👻",
+        "requirement": 1000,
+        "reward": 5000,
+        "rarity": "mythic",
+        "category": "secret",
+        "secret": true
+    },
+    {
+        "id": "SECRET_2",
+        "name": "Afortunado",
+        "description": "Gana 3 minijuegos",
+        "emoji": "🍀",
+        "requirement": 3,
+        "reward": 2000,
+        "rarity": "legendary",
+        "category": "secret",
+        "secret": true
+    },
+    {
+        "id": "SECRET_3",
+        "name": "Millonario",
+        "description": "Acumula 1,000,000 de clics",
+        "emoji": "💰💰💰",
+        "requirement": 1000000,
+        "reward": 10000,
+        "rarity": "godly",
+        "category": "secret",
+        "secret": true
+    },
+    {
+        "id": "SECRET_4",
+        "name": "Dios del Clic",
+        "description": "Alcanza nivel 100 de prestigio",
+        "emoji": "👑👑👑",
+        "requirement": 100,
+        "reward": 50000,
+        "rarity": "godly",
+        "category": "secret",
+        "secret": true
+    },
+    {
+        "id": "SECRET_5",
+        "name": "El Elegido",
+        "description": "Completa 10 eventos especiales",
+        "emoji": "✨✨✨",
+        "requirement": 10,
+        "reward": 5000,
+        "rarity": "mythic",
+        "category": "secret",
+        "secret": true
+    },
+    {
+        "id": "SECRET_6",
+        "name": "Coleccionista",
+        "description": "Desbloquea 50 logros",
+        "emoji": "🏆🏆",
+        "requirement": 50,
+        "reward": 10000,
+        "rarity": "legendary",
+        "category": "secret",
+        "secret": true
+    },
+    {
+        "id": "SECRET_7",
+        "name": "Completista",
+        "description": "Desbloquea todos los logros",
+        "emoji": "🏆🏆🏆",
+        "requirement": 100,
+        "reward": 100000,
+        "rarity": "godly",
+        "category": "secret",
+        "secret": true
+    },
+    {
+        "id": "SECRET_8",
+        "name": "Leyenda Viva",
+        "description": "Juega por 1 año (8760 horas)",
+        "emoji": "📅👑",
+        "requirement": 31536000,
+        "reward": 1000000,
+        "rarity": "godly",
+        "category": "secret",
+        "secret": true
+    },
+    {
+        "id": "CLICK_2000000",
+        "name": "Motor Imparable",
+        "description": "Alcanza 2,000,000 clics totales",
+        "emoji": "🚀",
+        "requirement": 2000000,
+        "reward": 18000,
+        "rarity": "godly",
+        "category": "clicks"
+    },
+    {
+        "id": "CLICK_5000000",
+        "name": "Núcleo de Clics",
+        "description": "Alcanza 5,000,000 clics totales",
+        "emoji": "🧿",
+        "requirement": 5000000,
+        "reward": 30000,
+        "rarity": "godly",
+        "category": "clicks"
+    },
+    {
+        "id": "CLICK_10000000",
+        "name": "Horizonte Infinito",
+        "description": "Alcanza 10,000,000 clics totales",
+        "emoji": "♾️",
+        "requirement": 10000000,
+        "reward": 50000,
+        "rarity": "godly",
+        "category": "clicks"
+    },
+    {
+        "id": "CPS_2500",
+        "name": "Turbina Cuántica",
+        "description": "Alcanza 2,500 CPS",
+        "emoji": "🌀",
+        "requirement": 2500,
+        "reward": 18000,
+        "rarity": "mythic",
+        "category": "cps"
+    },
+    {
+        "id": "CPS_5000",
+        "name": "Pulso Estelar",
+        "description": "Alcanza 5,000 CPS",
+        "emoji": "🌠",
+        "requirement": 5000,
+        "reward": 30000,
+        "rarity": "godly",
+        "category": "cps"
+    },
+    {
+        "id": "AUTO_250",
+        "name": "Fábrica Autónoma",
+        "description": "Ten 250 Auto Clickers",
+        "emoji": "🏭",
+        "requirement": 250,
+        "reward": 12000,
+        "rarity": "mythic",
+        "category": "autoClickers"
+    },
+    {
+        "id": "AUTO_500",
+        "name": "Planeta Mecánico",
+        "description": "Ten 500 Auto Clickers",
+        "emoji": "🪐",
+        "requirement": 500,
+        "reward": 25000,
+        "rarity": "godly",
+        "category": "autoClickers"
+    },
+    {
+        "id": "MULTI_128",
+        "name": "Potencia Exponencial",
+        "description": "Alcanza multiplicador x128",
+        "emoji": "📈",
+        "requirement": 128,
+        "reward": 12000,
+        "rarity": "mythic",
+        "category": "multiplier"
+    },
+    {
+        "id": "MULTI_256",
+        "name": "Amplificador Máximo",
+        "description": "Alcanza multiplicador x256",
+        "emoji": "🔊",
+        "requirement": 256,
+        "reward": 24000,
+        "rarity": "godly",
+        "category": "multiplier"
+    },
+    {
+        "id": "PRESTIGE_50",
+        "name": "Ascensión Mayor",
+        "description": "Alcanza prestigio 50",
+        "emoji": "🪽",
+        "requirement": 50,
+        "reward": 20000,
+        "rarity": "mythic",
+        "category": "prestige"
+    },
+    {
+        "id": "PRESTIGE_100",
+        "name": "Entidad Suprema",
+        "description": "Alcanza prestigio 100",
+        "emoji": "🌌",
+        "requirement": 100,
+        "reward": 50000,
+        "rarity": "godly",
+        "category": "prestige"
+    },
+    {
+        "id": "MINIGAME_500",
+        "name": "Leyenda de Arcade",
+        "description": "Juega 500 minijuegos",
+        "emoji": "🕹️",
+        "requirement": 500,
+        "reward": 15000,
+        "rarity": "mythic",
+        "category": "minigames"
+    },
+    {
+        "id": "MISSION_250",
+        "name": "Operador Perfecto",
+        "description": "Completa 250 misiones",
+        "emoji": "🎖️",
+        "requirement": 250,
+        "reward": 20000,
+        "rarity": "godly",
+        "category": "missions"
+    }
+];
+export const RARITY_LABELS = {
+    common: 'Común',
+    uncommon: 'Poco común',
+    rare: 'Raro',
+    epic: 'Épico',
+    legendary: 'Legendario',
+    mythic: 'Mítico',
+    godly: 'Divino'
+};

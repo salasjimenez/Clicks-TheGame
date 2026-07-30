@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "Bundler",
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "rootDir": "src",
+    "outDir": "assets/js",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "useDefineForClassFields": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "removeComments": true
+  },
+  "include": [
+    "src/**/*.ts"
+  ]
+}

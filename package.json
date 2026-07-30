@@ -1,0 +1,16 @@
+{
+  "name": "clicks-the-game",
+  "version": "3.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "clean": "node scripts/clean.mjs",
+    "build": "npm run clean && tsc && node scripts/copy-static.mjs",
+    "check": "tsc --noEmit",
+    "dev": "npm run build && node scripts/serve.mjs",
+    "serve": "node scripts/serve.mjs"
+  },
+  "devDependencies": {
+    "typescript": "5.9.2"
+  }
+}

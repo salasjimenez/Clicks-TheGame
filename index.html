@@ -1,277 +1,285 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="es" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Click!</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#070713">
+  <meta name="description" content="CLICK! es un videojuego incremental retro con mejoras, misiones, minijuegos, logros y prestigio.">
+  <title>CLICK! — Retro Arcade</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23070713'/%3E%3Ccircle cx='32' cy='32' r='21' fill='%23ff3cac' stroke='%2300f5ff' stroke-width='3'/%3E%3Cpath d='M21 25h22v14H21z' fill='none' stroke='white' stroke-width='4'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./assets/css/styles.css">
 </head>
 <body>
-    <!-- Fondo animado -->
-    <div class="stars"></div>
-    <div class="twinkling"></div>
-    
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <div class="time-box">
-                <span class="time-icon">⏰</span>
-                <span id="currentTime">00:00:00</span>
-            </div>
-            <div class="stats-box">
-                <div class="stat">
-                    <span class="stat-icon">💰</span>
-                    <span class="stat-value" id="clickCount">0</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-icon">⚡</span>
-                    <span class="stat-value" id="cps">0</span>
-                    <span class="stat-label">Cps</span>
-                </div>
-            </div>
+  <a class="skip-link" href="#game-main">Ir al juego</a>
+  <div class="pixel-sky" aria-hidden="true"></div>
+  <div class="retro-grid" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+  <div class="screen-vignette" aria-hidden="true"></div>
+
+  <main class="arcade-shell" id="game-main">
+    <header class="hud-bar">
+      <a class="arcade-brand" href="./" aria-label="CLICK! Retro Arcade">
+        <span class="brand-cabinet" aria-hidden="true">C!</span>
+        <span class="brand-copy">
+          <strong>CLICK!</strong>
+          <small>RETRO ARCADE</small>
+        </span>
+      </a>
+
+      <div class="hud-stats" aria-label="Estado de la partida">
+        <div class="hud-stat">
+          <span class="hud-icon" aria-hidden="true">⭐</span>
+          <span><small>NIVEL</small><strong id="prestige-level-hud">0</strong></span>
+        </div>
+        <div class="hud-stat hud-stat-coins">
+          <span class="hud-icon" aria-hidden="true">🪙</span>
+          <span><small>MONEDAS</small><strong id="coin-count">0</strong></span>
+        </div>
+        <div class="hud-stat">
+          <span class="hud-icon" aria-hidden="true">👆</span>
+          <span><small>CLICS</small><strong id="total-clicks-hud">0</strong></span>
+        </div>
+        <div class="hud-stat">
+          <span class="hud-icon" aria-hidden="true">⚡</span>
+          <span><small>CPS</small><strong id="cps-count">0</strong></span>
+        </div>
+        <div class="hud-stat hud-stat-desktop">
+          <span class="hud-icon" aria-hidden="true">✦</span>
+          <span><small>BONUS</small><strong id="multiplier-hud">x1.00</strong></span>
+        </div>
+      </div>
+
+      <div class="hud-actions">
+        <span class="hud-clock" id="current-time">00:00:00</span>
+        <button class="round-action" id="sound-toggle" type="button" aria-label="Activar o desactivar sonido">
+          <svg class="sound-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"></path><path d="M15 9a4 4 0 0 1 0 6M18 6a8 8 0 0 1 0 12"></path></svg>
+          <svg class="sound-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"></path><path d="m16 10 5 5m0-5-5 5"></path></svg>
+        </button>
+        <button class="round-action" id="theme-toggle" type="button" aria-label="Cambiar paleta">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9c0-1-.16-1.96-.46-2.86A7 7 0 0 1 12 3Z"></path></svg>
+        </button>
+        <button class="round-action" id="help-button" type="button" aria-label="Ver ayuda">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.8 9a2.4 2.4 0 0 1 4.5 1.2c0 1.8-2.3 2-2.3 3.6M12 17h.01"></path></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="arcade-layout">
+      <nav class="orbital-sidebar" aria-label="Menú del juego">
+        <span class="sidebar-rail" aria-hidden="true"></span>
+        <button class="orb-button orb-prestige" type="button" data-panel="prestige" aria-label="Abrir prestigio">
+          <span class="orb-emoji" aria-hidden="true">🌟</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.2 1 5.9-5.2-2.8-5.2 2.8 1-5.9-4.3-4.2 5.9-.9z"></path></svg>
+          <span class="orb-label">Prestigio</span>
+        </button>
+        <button class="orb-button orb-today" type="button" data-panel="missions" aria-label="Abrir misiones de hoy">
+          <span class="orb-emoji" aria-hidden="true">📋</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18H6zM9 7h6M9 11h6M9 15h4"></path></svg>
+          <span class="orb-label">Hoy</span>
+          <span class="orb-badge" id="sidebar-mission-badge">0/3</span>
+        </button>
+        <button class="orb-button orb-arcade" type="button" data-panel="arcade" aria-label="Abrir arcade">
+          <span class="orb-emoji" aria-hidden="true">🕹️</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8h10l3 9H4zM8 12h4M10 10v4M16 12h.01M18 14h.01"></path></svg>
+          <span class="orb-label">Arcade</span>
+        </button>
+        <button class="orb-button orb-upgrades" type="button" data-panel="store" aria-label="Abrir mejoras">
+          <span class="orb-emoji" aria-hidden="true">🛠️</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6 4-4 4 4-4 4M3 21l7-7M12 5l7 7-7 7-7-7z"></path></svg>
+          <span class="orb-label">Mejoras</span>
+        </button>
+        <button class="orb-button orb-stats" type="button" data-panel="stats" aria-label="Abrir estadísticas">
+          <span class="orb-emoji" aria-hidden="true">📊</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10h4v10M10 20V4h4v16M16 20v-7h4v7"></path></svg>
+          <span class="orb-label">Estadísticas</span>
+        </button>
+        <button class="orb-button orb-achievements" type="button" data-panel="achievements" aria-label="Abrir logros">
+          <span class="orb-emoji" aria-hidden="true">🏆</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v4a4 4 0 0 1-8 0zM8 6H4v2a4 4 0 0 0 4 4M16 6h4v2a4 4 0 0 1-4 4M12 12v5M8 21h8M9 17h6"></path></svg>
+          <span class="orb-label">Logros</span>
+        </button>
+        <button class="orb-button orb-image-lab" id="image-lab-button" type="button" aria-label="Abrir laboratorio de imágenes" hidden>
+          <span class="orb-emoji" aria-hidden="true">🖼️</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4zM7 15l3-3 3 3 2-2 3 3M8 9h.01"></path></svg>
+          <span class="orb-label">Image Lab</span>
+          <span class="orb-badge orb-unlock-badge">★</span>
+        </button>
+      </nav>
+
+      <section class="playfield" aria-label="Zona principal del juego">
+        <div class="event-banner" id="event-banner" hidden aria-live="polite">
+          <span class="event-emoji" id="event-emoji">⚡</span>
+          <div><strong id="event-title">Evento activo</strong><span id="event-description">Descripción del evento</span></div>
+          <time id="event-timer">00:00</time>
         </div>
 
-        <!-- Estado del juego -->
-        <div class="game-status-container">
-            <div class="game-status neon-text" id="gameStatus">CLICK!</div>
+        <div class="marquee-sign" aria-hidden="true">
+          <span class="marquee-bulb"></span><span class="marquee-bulb"></span><span class="marquee-bulb"></span>
+          <strong>CLICK!</strong>
+          <small>INSERT COIN · PRESS START · KEEP CLICKING</small>
+          <span class="marquee-bulb"></span><span class="marquee-bulb"></span><span class="marquee-bulb"></span>
         </div>
 
-        <!-- Área principal de clics -->
-        <div class="click-area">
-            <div class="click-button" id="clickButton">
-                <div class="button-inner">
-                    <div class="button-text">CLICK!</div>
-                    <div class="button-subtext" id="multiplierDisplay">x1</div>
-                </div>
-                <div class="button-glow"></div>
-                <div class="button-rings">
-                    <div class="ring"></div>
-                    <div class="ring"></div>
-                    <div class="ring"></div>
-                </div>
-            </div>
-            
-            <div class="progress-container">
-                <div class="progress-label">
-                    <span>Próximo logro:</span>
-                    <span id="nextAchievementName">100 clics - Centenario</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressBar"></div>
-                </div>
-            </div>
+        <div class="machine-stage">
+          <div class="score-card score-card-left">
+            <span>RACHA</span>
+            <strong><span id="daily-streak">0</span> 🔥</strong>
+          </div>
+          <div class="score-card score-card-right">
+            <span>LOGROS</span>
+            <strong><span id="achievement-count-mini">0</span>/100 🏆</strong>
+          </div>
+
+          <div class="click-machine">
+            <div class="machine-ring ring-one" aria-hidden="true"></div>
+            <div class="machine-ring ring-two" aria-hidden="true"></div>
+            <div class="machine-ring ring-three" aria-hidden="true"></div>
+            <button class="click-button" id="click-button" type="button" aria-label="Generar monedas">
+              <span class="click-glare" aria-hidden="true"></span>
+              <span class="button-pixels" aria-hidden="true"></span>
+              <strong>CLICK!</strong>
+              <small id="click-power">+1 POR CLIC</small>
+            </button>
+          </div>
+
+          <p class="keyboard-hint"><kbd>ESPACIO</kbd><span>también activa el botón</span></p>
+          <div class="combo-console" id="combo-console" hidden aria-live="polite">
+            <span>🔥 COMBO</span>
+            <strong id="combo-value">x1.00</strong>
+            <small id="combo-count">0 golpes</small>
+            <i><span id="combo-progress"></span></i>
+          </div>
         </div>
 
-        <!-- Panel de prestigio -->
-        <div class="prestige-panel" id="prestigePanel">
-            <div class="prestige-info">
-                <span>🌟 Prestigio: <span id="prestigeLevel">0</span></span>
-                <span>💎 Puntos: <span id="prestigePoints">0</span></span>
-                <span>✨ Bonus: <span id="prestigeBonus">x1.0</span></span>
-            </div>
-            <button class="prestige-btn" id="prestigeBtn" onclick="window.prestige?.()">🌟 PRESTIGIAR (10,000 clics)</button>
-        </div>
+        <section class="goal-console" aria-label="Progreso al próximo logro">
+          <div class="goal-console-head">
+            <span>▶ PRÓXIMO LOGRO</span>
+            <strong id="next-achievement-name">Primer paso</strong>
+          </div>
+          <div class="progress-track" role="progressbar" aria-label="Progreso al siguiente logro" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="achievement-progress">
+            <span id="achievement-progress-fill"></span>
+          </div>
+          <div class="goal-values"><span id="achievement-progress-value">0</span><span id="achievement-progress-target">1</span></div>
+        </section>
 
-        <!-- COLUMNAS: MINIJUEGOS (IZQUIERDA) + MISIONES (DERECHA) -->
-        <div class="two-columns">
-            <!-- COLUMNA IZQUIERDA: MINIJUEGOS -->
-            <div class="column left-column">
-                <div class="game-section minigame-section">
-                    <div class="section-header" onclick="window.toggleMinigames?.()">
-                        <div class="header-left">
-                            <span class="header-icon">🎰</span>
-                            <span class="header-title">MINIJUEGOS</span>
-                        </div>
-                        <div class="header-right">
-                            <span class="toggle-icon" id="minigameToggle">▼</span>
-                        </div>
-                    </div>
-                    <div class="game-grid minigames-grid" id="minigamesGrid">
-                        <div class="game-card" onclick="window.playRoulette?.()">
-                            <div class="game-card-icon">🎡</div>
-                            <div class="game-card-name">Ruleta</div>
-                            <div class="game-card-cost">100 clics</div>
-                            <div class="game-card-desc">x35 al 0</div>
-                        </div>
-                        <div class="game-card" onclick="window.playSlotMachine?.()">
-                            <div class="game-card-icon">🎰</div>
-                            <div class="game-card-name">Tragamonedas</div>
-                            <div class="game-card-cost">50 clics</div>
-                            <div class="game-card-desc">Jackpot 3 sietes</div>
-                        </div>
-                        <div class="game-card" onclick="window.playNumberGuess?.()">
-                            <div class="game-card-icon">🔢</div>
-                            <div class="game-card-name">Adivina</div>
-                            <div class="game-card-cost">25 clics</div>
-                            <div class="game-card-desc">1-10, x5 si aciertas</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- COLUMNA DERECHA: MISIONES DIARIAS -->
-            <div class="column right-column">
-                <div class="game-section missions-section">
-                    <div class="section-header" onclick="window.toggleMissions?.()">
-                        <div class="header-left">
-                            <span class="header-icon">📋</span>
-                            <span class="header-title">MISIONES DIARIAS</span>
-                        </div>
-                        <div class="header-right">
-                            <span class="toggle-icon" id="missionToggle">▼</span>
-                        </div>
-                    </div>
-                    <div class="missions-grid" id="missionsGrid">
-                        <!-- Las misiones se generan dinámicamente -->
-                        <div class="mission-card">
-                            <div class="mission-name">Cargando...</div>
-                            <div class="mission-progress">0/0</div>
-                            <div class="mission-reward">💰 0</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="quick-console">
+          <button type="button" data-panel="prestige"><span>🌟</span><small>PRESTIGIO</small><strong id="prestige-level-mini">0</strong></button>
+          <button type="button" data-panel="store"><span>💎</span><small>PUNTOS</small><strong id="quick-prestige-points">0</strong></button>
+          <button type="button" data-panel="stats"><span>🎮</span><small>ESTADO</small><strong>ONLINE</strong></button>
         </div>
+      </section>
 
-        <!-- Panel de eventos especiales -->
-        <div class="event-section" id="eventSection">
-            <div class="event-banner" id="eventBanner" style="display: none;">
-                <span id="eventText">✨ EVENTO ACTIVO ✨</span>
-            </div>
-        </div>
-
-        <!-- Sección de TIENDA -->
-        <div class="game-section shop-section">
-            <div class="section-header" onclick="window.toggleShop?.()">
-                <div class="header-left">
-                    <span class="header-icon">🛒</span>
-                    <span class="header-title">TIENDA</span>
-                </div>
-                <div class="header-right">
-                    <span class="toggle-icon" id="shopToggle">▼</span>
-                </div>
-            </div>
-            <div class="shop-items" id="shopItems">
-                <div class="shop-item" onclick="window.purchaseItem?.('autoClicker')">
-                    <div class="item-icon">🤖</div>
-                    <div class="item-info">
-                        <div class="item-name">Auto Clicker</div>
-                        <div class="item-description">1 clic automático por segundo</div>
-                        <div class="item-level" id="autoClickerLevel">Nivel 0</div>
-                    </div>
-                    <div class="item-price-container">
-                        <span class="item-price" id="autoClickerPrice">50</span>
-                        <span class="item-currency">💰</span>
-                    </div>
-                </div>
-                <div class="shop-item" onclick="window.purchaseItem?.('clickMultiplier')">
-                    <div class="item-icon">⚡</div>
-                    <div class="item-info">
-                        <div class="item-name">Multiplicador</div>
-                        <div class="item-description">Duplica tus clics</div>
-                        <div class="item-level" id="multiplierLevel">x1</div>
-                    </div>
-                    <div class="item-price-container">
-                        <span class="item-price" id="clickMultiplierPrice">100</span>
-                        <span class="item-currency">💰</span>
-                    </div>
-                </div>
-                <div class="shop-item" onclick="window.purchaseItem?.('timeBoost')">
-                    <div class="item-icon">⏱️</div>
-                    <div class="item-info">
-                        <div class="item-name">Time Boost</div>
-                        <div class="item-description">×3 CPS por 10 segundos</div>
-                    </div>
-                    <div class="item-price-container">
-                        <span class="item-price" id="timeBoostPrice">200</span>
-                        <span class="item-currency">💰</span>
-                    </div>
-                </div>
-                <div class="shop-item" onclick="window.purchaseItem?.('capsule')">
-                    <div class="item-icon">💊</div>
-                    <div class="item-info">
-                        <div class="item-name">Cápsula Misteriosa</div>
-                        <div class="item-description">Premio sorpresa (50-150)</div>
-                    </div>
-                    <div class="item-price-container">
-                        <span class="item-price" id="capsulePrice">500</span>
-                        <span class="item-currency">💰</span>
-                    </div>
-                </div>
-                <div class="shop-item special" onclick="window.purchaseItem?.('superCapsule')">
-                    <div class="item-icon">🌟</div>
-                    <div class="item-info">
-                        <div class="item-name">Súper Cápsula</div>
-                        <div class="item-description">¡Premio mayor! (500-1000)</div>
-                    </div>
-                    <div class="item-price-container">
-                        <span class="item-price" id="superCapsulePrice">1000</span>
-                        <span class="item-currency">💎</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Panel de estadísticas y controles -->
-        <div class="controls-panel">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <span class="stat-icon">🤖</span>
-                    <div class="stat-info">
-                        <span class="stat-label">Auto Clickers</span>
-                        <span class="stat-value" id="autoClickerCount">0</span>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-icon">⚡</span>
-                    <div class="stat-info">
-                        <span class="stat-label">Multiplicador</span>
-                        <span class="stat-value" id="multiplierCount">1x</span>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-icon">📊</span>
-                    <div class="stat-info">
-                        <span class="stat-label">Total Clics</span>
-                        <span class="stat-value" id="totalClicks">0</span>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-icon">🏆</span>
-                    <div class="stat-info">
-                        <span class="stat-label">Récord</span>
-                        <span class="stat-value" id="highScore">0</span>
-                    </div>
-                </div>
-            </div>
-            <div class="control-buttons">
-                <button class="control-btn save" onclick="window.saveGame?.()"> Guardar</button>
-                <button class="control-btn load" onclick="window.loadGame?.()"> Cargar</button>
-                <button class="control-btn reset" onclick="window.resetGame?.()"> Reiniciar</button>
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <div class="footer">
-            <span>CLICK! v2.7</span>
-            <span class="separator">•</span>
-            <span>⏱ Tiempo: <span id="playTime">0h 0m</span></span>
-            <span class="separator">•</span>
-            <span>💫 Dev. Pitxgoras</span>
-        </div>
+      <aside class="achievement-terminal" aria-label="Vista rápida de logros">
+        <div class="terminal-head"><span>ACHIEVEMENT_FEED.EXE</span><i aria-hidden="true"></i></div>
+        <div class="terminal-count"><strong id="terminal-achievement-count">0</strong><span>/ 100</span></div>
+        <div class="terminal-preview" id="achievement-terminal-preview"></div>
+        <button class="terminal-button" type="button" data-panel="achievements">ABRIR COLECCIÓN <span>↗</span></button>
+      </aside>
     </div>
 
-    <!-- Área de notificaciones -->
-    <div class="notification-area" id="notificationArea"></div>
+    <footer class="arcade-footer">
+      <span>CLICK! v2</span>
+      <button class="github-star-gate" id="star-gate-button" type="button" aria-label="Abrir secreto de GitHub">
+        <span aria-hidden="true">★</span>
+        <strong id="github-star-label">STAR REPOSITORY</strong>
+        <small id="github-star-count">...</small>
+      </button>
+      <span>DEV. JHONN PETHER</span>
+    </footer>
+  </main>
 
-    <!-- SCRIPTS SEPARADOS -->
-    <script src="js/achievements.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/prestige.js"></script>
-    <script src="js/minigames.js"></script>
-    <script src="js/missions.js"></script>
-    <script src="js/events.js"></script>
-    <script src="js/shop.js"></script>
+  <div class="panel-sources" id="panel-sources" hidden>
+    <section class="modal-game-panel prestige-panel" id="panel-prestige" data-panel-title="Prestigio">
+      <div class="modal-panel-heading">
+        <span class="modal-panel-symbol">🌟</span>
+        <div><span class="eyebrow">ASCENSIÓN</span><h2>Prestigio</h2><p>Reinicia la producción base para conseguir una bonificación permanente.</p></div>
+      </div>
+      <dl class="prestige-metrics">
+        <div><dt>Nivel</dt><dd id="prestige-level">0</dd></div>
+        <div><dt>Puntos</dt><dd id="prestige-points">0</dd></div>
+        <div><dt>Bonus</dt><dd id="prestige-bonus">x1.00</dd></div>
+      </dl>
+      <div class="prestige-warning"><span>⚠️</span><p>Conservarás tus logros y estadísticas. Las monedas y mejoras volverán a cero.</p></div>
+      <button class="primary-button full-button" id="prestige-button" type="button"><span>PRESTIGIAR AHORA</span><small id="prestige-requirement">10K clics</small></button>
+    </section>
+
+    <section class="modal-game-panel" id="panel-missions" data-panel-title="Misiones de hoy">
+      <div class="modal-panel-heading">
+        <span class="modal-panel-symbol">📋</span>
+        <div><span class="eyebrow">DESAFÍO DIARIO</span><h2>Misiones de hoy</h2><p>Completa las tres tareas antes de que termine el día.</p></div>
+        <span class="panel-counter" id="mission-summary">0/3</span>
+      </div>
+      <div class="mission-list" id="mission-list"></div>
+    </section>
+
+    <section class="modal-game-panel" id="panel-arcade" data-panel-title="Arcade">
+      <div class="modal-panel-heading">
+        <span class="modal-panel-symbol">🕹️</span>
+        <div><span class="eyebrow">BONUS STAGE</span><h2>Arcade</h2><p>Arriesga monedas para multiplicar tus ganancias.</p></div>
+        <span class="panel-counter">3 juegos</span>
+      </div>
+      <div class="minigame-grid">
+        <button class="minigame-card" type="button" data-minigame="roulette"><span class="minigame-emoji">🎡</span><span><strong>Ruleta neón</strong><small>Elige rojo, negro o verde</small></span><span class="cost">100 🪙</span></button>
+        <button class="minigame-card" type="button" data-minigame="slots"><span class="minigame-emoji">🎰</span><span><strong>Pixel slots</strong><small>Consigue tres símbolos</small></span><span class="cost">75 🪙</span></button>
+        <button class="minigame-card" type="button" data-minigame="guess"><span class="minigame-emoji">🔢</span><span><strong>Código secreto</strong><small>Adivina del 1 al 10</small></span><span class="cost">50 🪙</span></button>
+      </div>
+    </section>
+
+    <section class="modal-game-panel" id="panel-store" data-panel-title="Mejoras">
+      <div class="modal-panel-heading">
+        <span class="modal-panel-symbol">🛠️</span>
+        <div><span class="eyebrow">POWER-UP SHOP</span><h2>Mejoras</h2><p>Potencia cada clic y automatiza tu máquina.</p></div>
+        <span class="discount-pill" id="discount-pill" hidden>25% MENOS</span>
+      </div>
+      <div class="store-grid" id="store-grid"></div>
+    </section>
+
+    <section class="modal-game-panel" id="panel-stats" data-panel-title="Estadísticas">
+      <div class="modal-panel-heading stats-heading">
+        <span class="modal-panel-symbol">📊</span>
+        <div><span class="eyebrow">PLAYER DATA</span><h2>Estadísticas</h2><p>Resumen completo del progreso almacenado en este navegador.</p></div>
+      </div>
+      <dl class="stat-grid">
+        <div><span>🪙</span><dt>Total generado</dt><dd id="lifetime-coins">0</dd></div>
+        <div><span>🖱️</span><dt>Clics manuales</dt><dd id="manual-clicks">0</dd></div>
+        <div><span>🏆</span><dt>Récord de monedas</dt><dd id="highest-coins">0</dd></div>
+        <div><span>🎮</span><dt>Minijuegos ganados</dt><dd id="minigames-won">0</dd></div>
+        <div><span>🎯</span><dt>Clics críticos</dt><dd id="critical-clicks">0</dd></div>
+        <div><span>🔥</span><dt>Combo máximo</dt><dd id="highest-combo">0</dd></div>
+        <div><span>🤖</span><dt>Monedas automáticas</dt><dd id="passive-coins">0</dd></div>
+        <div><span>⏱️</span><dt>Tiempo jugado</dt><dd id="play-time">0m</dd></div>
+      </dl>
+      <div class="save-actions">
+        <button class="secondary-button" id="save-button" type="button"><span>💾</span> Guardar</button>
+        <button class="secondary-button" id="export-button" type="button"><span>📤</span> Exportar</button>
+        <button class="secondary-button" id="import-button" type="button"><span>📥</span> Importar</button>
+        <button class="danger-button" id="reset-button" type="button"><span>🗑️</span> Reiniciar</button>
+        <input id="import-file" type="file" accept="application/json" hidden>
+      </div>
+    </section>
+
+    <section class="modal-game-panel" id="panel-achievements" data-panel-title="Logros">
+      <div class="modal-panel-heading">
+        <span class="modal-panel-symbol">🏆</span>
+        <div><span class="eyebrow">ACHIEVEMENT VAULT</span><h2>Logros</h2><p>Revisa tu colección y descubre el siguiente desafío.</p></div>
+        <button class="secondary-button" id="achievements-button" type="button">VER LOS 100</button>
+      </div>
+      <div class="achievement-preview" id="achievement-preview"></div>
+    </section>
+  </div>
+
+  <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
+
+  <div class="modal-backdrop" id="modal-backdrop" hidden>
+    <section class="modal" id="modal-panel" role="dialog" aria-modal="true" aria-label="Panel del juego">
+      <div class="modal-chrome" aria-hidden="true"><span></span><span></span><span></span><strong>CLICK_OS</strong></div>
+      <button class="modal-close" id="modal-close" type="button" aria-label="Cerrar panel">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"></path></svg>
+      </button>
+      <div id="modal-content"></div>
+    </section>
+  </div>
+
+  <script type="module" src="./assets/js/main.js"></script>
 </body>
 </html>

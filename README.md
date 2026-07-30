@@ -1,52 +1,29 @@
-# 🎮 CLICK! - The Game
+# CLICK! — Retro Arcade
 
-<div align="center">
+Juego incremental retro desarrollado con TypeScript, HTML y CSS, preparado para ejecutarse localmente y publicarse como sitio estático en GitHub Pages.
 
-![Version](https://img.shields.io/badge/version-4.0-blue?style=for-the-badge)
-![JavaScript](https://img.shields.io/badge/JavaScript-61%25-yellow?style=for-the-badge)
-![CSS](https://img.shields.io/badge/CSS-24%25-purple?style=for-the-badge)
-![HTML](https://img.shields.io/badge/HTML-15%25-orange?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+## Funciones
 
-**¡El juego de clics más adictivo con 100 logros, minijuegos y sistema de prestigio!**
+- Conteo real de clics manuales separado de la producción automática.
+- Monedas, CPS, clics críticos, combo rápido y progreso offline.
+- Ocho mejoras permanentes, consumibles, prestigio y eventos temporales.
+- Misiones diarias, 100 logros y tres minijuegos.
+- Guardado local, exportación e importación de partidas.
+- Diseño retro gamer responsive para escritorio, tablet y móvil.
+- Easter egg Image Lab desbloqueable al verificar una estrella en GitHub.
+- Conversión local de imágenes a PNG, JPG o WebP.
 
-[![Jugar ahora](https://img.shields.io/badge/🎮-JUGAR_AHORA-red?style=for-the-badge)](https://pitxgoras.github.io/Clicks_TheGame/)
+## Desarrollo local
 
-</div>
-
----
-
-## 📝 **Descripción**
-
-**CLICK!** es un juego incremental donde cada clic cuenta. Mejora tu poder, compra auto clickers, juega minijuegos, completa misiones diarias y desbloquea **100 logros únicos** mientras compites por la puntuación más alta.
-
----
-
-## ✨ **Características Principales**
-
-| Característica | Descripción |
-|----------------|-------------|
-| 🖱️ **Sistema de Clics** | Cada clic suma puntos, con multiplicadores y bonificaciones |
-| 🏆 **100 Logros** | Desde 1 hasta 1,000,000 clics, con rarezas (Común → Divino) |
-| 🤖 **Auto Clickers** | Compra robots que cliquean automáticamente |
-| 🛒 **Tienda** | 5 mejoras diferentes para potenciar tu juego |
-| 🎰 **Minijuegos** | Ruleta, Tragamonedas y Adivina el Número |
-| 📋 **Misiones Diarias** | 3 misiones nuevas cada día con recompensas y racha |
-| ✨ **Eventos Especiales** | Doble clic, lluvia de clics y descuentos temporales |
-| 🌟 **Sistema de Prestigio** | Reinicia progreso por bonificaciones permanentes |
-| 💾 **Guardado Automático** | Tu progreso se guarda automáticamente |
-| ⌨️ **Soporte Teclado** | Juega con la barra espaciadora |
-| 🎨 **Diseño Neon** | Interfaz moderna con efectos visuales y responsive |
-
----
-
-## 🎮 **Cómo Jugar**
-
-### Opción 1: Jugar online (recomendado)
-👉 **[https://pitxgoras.github.io/Clicks_TheGame/](https://pitxgoras.github.io/Clicks_TheGame/)**
-
-### Opción 2: Clonar y jugar local
 ```bash
-git clone https://github.com/pitxgoras/Clicks_TheGame.git
-cd Clicks_TheGame
-# Abre index.html en tu navegador
+npm install
+npm run check
+npm run build
+npm run dev
+```
+
+El servidor local se abre en `http://127.0.0.1:4173`.
+
+## GitHub Pages
+
+El archivo `index.html` permanece en la raíz y los recursos compilados se publican desde `assets`. El workflow incluido en `.github/workflows/pages.yml` despliega el sitio automáticamente.
