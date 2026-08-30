@@ -2307,6 +2307,7 @@ button:disabled {
   background: rgba(255, 228, 94, 0.05);
   font: inherit;
   letter-spacing: inherit;
+  text-decoration: none;
 }
 
 .github-star-gate:hover,
@@ -2323,7 +2324,6 @@ button:disabled {
   font: inherit;
 }
 
-.star-gate-card,
 .image-lab {
   display: grid;
   gap: 14px;
@@ -2335,12 +2335,7 @@ button:disabled {
   box-shadow: inset 0 0 24px rgba(122, 92, 255, 0.08);
 }
 
-.github-link-button {
-  width: fit-content;
-  text-decoration: none;
-}
 
-.field-label,
 .quality-control span {
   color: var(--cyan);
   font-family: var(--pixel);
@@ -2349,22 +2344,7 @@ button:disabled {
   letter-spacing: 0.7px;
 }
 
-.github-input {
-  width: 100%;
-  padding: 13px 14px;
-  border: 1px solid rgba(0, 245, 255, 0.65);
-  border-radius: 5px;
-  outline: 0;
-  color: var(--text);
-  background: #060611;
-  font-family: var(--pixel);
-  font-size: 13px;
-}
 
-.github-input:focus {
-  border-color: var(--pink);
-  box-shadow: 0 0 14px rgba(255, 60, 172, 0.25);
-}
 
 .verification-status {
   margin: 0 !important;

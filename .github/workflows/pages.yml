@@ -5,32 +5,80 @@ on:
     branches: [main]
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
 concurrency:
   group: pages
   cancel-in-progress: true
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          package-manager-cache: false
+
+      - name: Install locked dependencies without lifecycle scripts
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Audit dependencies
+        run: npm audit --audit-level=high
+
+      - name: Dependency tree
+        run: npm ls --all
+
+      - name: TypeScript check
+        run: npm run check
+
+      - name: Build from reviewed source
+        run: npm run build
+
+      - name: Security regression scan
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -RniE 'api\.github\.com|github-username|verify-star|open-star-gate|eval[[:space:]]*\(|new Function|document\.write|atob[[:space:]]*\(|<iframe|powershell|cmd\.exe|mshta' index.html src assets/js; then
+            echo "Forbidden or phishing-like pattern detected."
+            exit 1
+          fi
+
+      - name: Prepare static site
+        run: |
+          set -euo pipefail
+          rm -rf _site
+          mkdir -p _site
+          cp index.html _site/
+          cp -R assets _site/assets
+
+      - name: Configure Pages
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: ./_site
+
   deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/configure-pages@v5
-      - name: Prepare static site
-        run: |
-          mkdir -p _site
-          cp index.html .nojekyll _site/
-          cp -R assets _site/assets
-      - uses: actions/upload-pages-artifact@v4
-        with:
-          path: ./_site
       - name: Deploy
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0

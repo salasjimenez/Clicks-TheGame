@@ -6,10 +6,6 @@ import { clearState, exportState, importState, saveState } from '../game/storage
 import type { DerivedStats, GameState, StoreItemId, ToastMessage } from '../types.js';
 import { byId, escapeHtml, formatDuration } from './dom.js';
 import { spawnClickParticle } from './particles.js';
-
-const REPOSITORY_URL = 'https://github.com/sjhonn/Clicks_TheGame';
-const REPOSITORY_API = 'https://api.github.com/repos/sjhonn/Clicks_TheGame';
-const IMAGE_LAB_KEY = 'clicksTheGameImageLab';
 type ImageOutputFormat = 'image/png' | 'image/jpeg' | 'image/webp';
 
 export class GameUI {
@@ -39,7 +35,6 @@ export class GameUI {
   private readonly importFile = byId<HTMLInputElement>('import-file');
   private readonly comboConsole = byId<HTMLElement>('combo-console');
   private readonly imageLabButton = byId<HTMLButtonElement>('image-lab-button');
-  private readonly starGateButton = byId<HTMLButtonElement>('star-gate-button');
   private imageLabFile: File | null = null;
   private imageLabFormat: ImageOutputFormat = 'image/png';
   private imagePreviewUrl = '';
@@ -53,8 +48,6 @@ export class GameUI {
     this.engine = engine;
     this.bindEvents();
     this.updateClock();
-    this.syncEasterEgg();
-    void this.updateGitHubStars();
     window.setInterval(() => this.updateClock(), 1000);
     this.engine.onToast((message) => this.showToast(message));
     this.engine.subscribe((state, derived) => this.render(state, derived));
@@ -106,7 +99,6 @@ export class GameUI {
     byId<HTMLButtonElement>('reset-button').addEventListener('click', () => this.openResetConfirmation());
     byId<HTMLButtonElement>('prestige-button').addEventListener('click', () => this.openPrestigeConfirmation());
     byId<HTMLButtonElement>('modal-close').addEventListener('click', () => this.closeModal());
-    this.starGateButton.addEventListener('click', () => this.openStarGate());
     this.imageLabButton.addEventListener('click', () => this.openImageLab());
 
     document.querySelectorAll<HTMLButtonElement>('[data-panel]').forEach((button) => {
@@ -399,7 +391,7 @@ export class GameUI {
         <li><span>🔥</span><div><strong>Mantén el combo</strong><small>Haz clic rápidamente para aumentar temporalmente el valor de cada golpe.</small></div></li>
       </ul>
       <div class="modal-actions">
-        <button class="secondary-button" type="button" data-modal-action="open-star-gate"><span>★</span> Secreto de GitHub</button>
+        <button class="secondary-button" type="button" data-modal-action="open-image-lab"><span>🖼️</span> Image Lab local</button>
         <button class="primary-button" type="button" data-modal-action="close"><span>Entendido</span></button>
       </div>`);
   }
@@ -468,9 +460,7 @@ export class GameUI {
     const action = button?.dataset.modalAction;
     if (!action) return;
     if (action === 'close') this.closeModal();
-    if (action === 'open-star-gate') this.openStarGate();
     if (action === 'open-image-lab') this.openImageLab();
-    if (action === 'verify-star') await this.verifyStarFromModal(button);
     if (action.startsWith('image-format-')) this.selectImageFormat(action.replace('image-format-', '') as 'png' | 'jpeg' | 'webp');
     if (action === 'convert-image') await this.convertImage();
     if (action === 'confirm-reset') {
@@ -504,109 +494,12 @@ export class GameUI {
     }
   }
 
-  private syncEasterEgg(): void {
-    const unlocked = localStorage.getItem(IMAGE_LAB_KEY) === 'unlocked';
-    this.imageLabButton.hidden = !unlocked;
-    byId<HTMLElement>('github-star-label').textContent = unlocked ? 'IMAGE LAB UNLOCKED' : 'STAR REPOSITORY';
-    this.starGateButton.classList.toggle('is-unlocked', unlocked);
-  }
-
-  private async updateGitHubStars(): Promise<void> {
-    try {
-      const response = await fetch(REPOSITORY_API, {
-        headers: {
-          Accept: 'application/vnd.github+json',
-          'X-GitHub-Api-Version': '2022-11-28'
-        }
-      });
-      if (!response.ok) throw new Error(String(response.status));
-      const repository = await response.json() as { stargazers_count?: number };
-      byId<HTMLElement>('github-star-count').textContent = String(repository.stargazers_count ?? 0);
-    } catch {
-      byId<HTMLElement>('github-star-count').textContent = '★';
-    }
-  }
-
-  private openStarGate(): void {
-    if (localStorage.getItem(IMAGE_LAB_KEY) === 'unlocked') {
-      this.openImageLab();
-      return;
-    }
-    this.openModal(`<span class="eyebrow">EASTER EGG · GITHUB</span>
-      <h2 id="modal-title">Desbloquea Image Lab</h2>
-      <p>Dale una estrella al repositorio, escribe tu usuario de GitHub y verifica. El desbloqueo se guarda solamente en este navegador.</p>
-      <div class="star-gate-card">
-        <a class="primary-button github-link-button" href="${REPOSITORY_URL}" target="_blank" rel="noopener noreferrer"><span>★</span> Abrir repositorio</a>
-        <label class="field-label" for="github-username">Usuario de GitHub</label>
-        <input class="github-input" id="github-username" type="text" maxlength="39" autocomplete="username" spellcheck="false" placeholder="ejemplo: sjhonn">
-        <p class="verification-status" id="star-verification-status" aria-live="polite">La verificación usa la lista pública de estrellas del repositorio.</p>
-      </div>
-      <div class="modal-actions">
-        <button class="secondary-button" type="button" data-modal-action="close">Cancelar</button>
-        <button class="primary-button" type="button" data-modal-action="verify-star"><span>Verificar estrella</span></button>
-      </div>`);
-  }
-
-  private async verifyStarFromModal(button: HTMLButtonElement): Promise<void> {
-    const input = document.getElementById('github-username');
-    const status = document.getElementById('star-verification-status');
-    if (!(input instanceof HTMLInputElement) || !status) return;
-    const username = input.value.trim();
-    if (!/^[a-zA-Z0-9-]{1,39}$/.test(username)) {
-      status.textContent = 'Escribe un usuario de GitHub válido.';
-      status.dataset.tone = 'danger';
-      return;
-    }
-    button.disabled = true;
-    status.textContent = 'Consultando GitHub...';
-    status.dataset.tone = 'info';
-    try {
-      const starred = await this.hasStarredRepository(username);
-      if (!starred) {
-        status.textContent = 'No se encontró la estrella. Confirma el usuario y vuelve a intentarlo.';
-        status.dataset.tone = 'warning';
-        return;
-      }
-      localStorage.setItem(IMAGE_LAB_KEY, 'unlocked');
-      localStorage.setItem(`${IMAGE_LAB_KEY}User`, username);
-      this.syncEasterEgg();
-      this.showToast({ text: '★ Easter egg desbloqueado: Image Lab.', tone: 'success' });
-      this.openImageLab();
-    } catch {
-      status.textContent = 'GitHub no respondió o se alcanzó el límite temporal. Inténtalo más tarde.';
-      status.dataset.tone = 'danger';
-    } finally {
-      button.disabled = false;
-    }
-  }
-
-  private async hasStarredRepository(username: string): Promise<boolean> {
-    for (let page = 1; page <= 10; page += 1) {
-      const response = await fetch(`${REPOSITORY_API}/stargazers?per_page=100&page=${page}`, {
-        headers: {
-          Accept: 'application/vnd.github+json',
-          'X-GitHub-Api-Version': '2022-11-28'
-        }
-      });
-      if (!response.ok) throw new Error(String(response.status));
-      const users = await response.json() as Array<{ login?: string }>;
-      if (users.some((user) => user.login?.toLowerCase() === username.toLowerCase())) return true;
-      if (users.length < 100) return false;
-    }
-    return false;
-  }
-
   private openImageLab(): void {
-    if (localStorage.getItem(IMAGE_LAB_KEY) !== 'unlocked') {
-      this.openStarGate();
-      return;
-    }
     this.imageLabFile = null;
     this.imageLabFormat = 'image/png';
     if (this.imagePreviewUrl) URL.revokeObjectURL(this.imagePreviewUrl);
     this.imagePreviewUrl = '';
-    const user = escapeHtml(localStorage.getItem(`${IMAGE_LAB_KEY}User`) || 'PLAYER');
-    this.openModal(`<span class="eyebrow">SECRET TOOL · ${user}</span>
+    this.openModal(`<span class="eyebrow">SECRET TOOL · LOCAL</span>
       <h2 id="modal-title">Image Lab</h2>
       <p>Convierte imágenes en PNG, JPG o WebP directamente en el navegador. Ningún archivo se envía a un servidor.</p>
       <div class="image-lab">
