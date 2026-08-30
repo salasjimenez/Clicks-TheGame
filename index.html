@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; font-src 'self'; media-src 'none'; frame-src 'none'; worker-src 'none'; form-action 'none'; upgrade-insecure-requests">
+  <meta name="referrer" content="no-referrer">
   <meta name="theme-color" content="#070713">
   <meta name="description" content="CLICK! es un videojuego incremental retro con mejoras, misiones, minijuegos, logros y prestigio.">
   <title>CLICK! — Retro Arcade</title>
@@ -98,11 +100,11 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v4a4 4 0 0 1-8 0zM8 6H4v2a4 4 0 0 0 4 4M16 6h4v2a4 4 0 0 1-4 4M12 12v5M8 21h8M9 17h6"></path></svg>
           <span class="orb-label">Logros</span>
         </button>
-        <button class="orb-button orb-image-lab" id="image-lab-button" type="button" aria-label="Abrir laboratorio de imágenes" hidden>
+        <button class="orb-button orb-image-lab" id="image-lab-button" type="button" aria-label="Abrir laboratorio de imágenes">
           <span class="orb-emoji" aria-hidden="true">🖼️</span>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4zM7 15l3-3 3 3 2-2 3 3M8 9h.01"></path></svg>
           <span class="orb-label">Image Lab</span>
-          <span class="orb-badge orb-unlock-badge">★</span>
+          <span class="orb-badge orb-unlock-badge">LOCAL</span>
         </button>
       </nav>
 
@@ -179,11 +181,11 @@
 
     <footer class="arcade-footer">
       <span>CLICK! v2</span>
-      <button class="github-star-gate" id="star-gate-button" type="button" aria-label="Abrir secreto de GitHub">
-        <span aria-hidden="true">★</span>
-        <strong id="github-star-label">STAR REPOSITORY</strong>
-        <small id="github-star-count">...</small>
-      </button>
+      <a class="github-star-gate" href="https://github.com/sjhonn/Clicks-TheGame" target="_blank" rel="noopener noreferrer" aria-label="Ver codigo fuente en GitHub">
+        <span aria-hidden="true">↗</span>
+        <strong>CODIGO FUENTE</strong>
+        <small>GitHub</small>
+      </a>
       <span>DEV. JHONN PETHER</span>
     </footer>
   </main>
