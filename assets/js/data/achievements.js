@@ -968,7 +968,7 @@ export const ACHIEVEMENTS = [
         "category": "multiplier"
     },
     {
-        "id": "PRESTIGE_50",
+        "id": "PRESTIGE_ASCENSION_50",
         "name": "Ascensión Mayor",
         "description": "Alcanza prestigio 50",
         "emoji": "🪽",
@@ -978,7 +978,7 @@ export const ACHIEVEMENTS = [
         "category": "prestige"
     },
     {
-        "id": "PRESTIGE_100",
+        "id": "PRESTIGE_ENTITY_100",
         "name": "Entidad Suprema",
         "description": "Alcanza prestigio 100",
         "emoji": "🌌",
@@ -1006,6 +1006,256 @@ export const ACHIEVEMENTS = [
         "reward": 20000,
         "rarity": "godly",
         "category": "missions"
+    },
+    {
+        "id": "DEEP_LEVEL_1",
+        "name": "Bajo la Superficie",
+        "description": "Realiza tu primer reinicio de núcleo",
+        "emoji": "💠",
+        "requirement": 1,
+        "reward": 1500,
+        "rarity": "rare",
+        "category": "deepPrestige"
+    },
+    {
+        "id": "DEEP_LEVEL_2",
+        "name": "Segundo Pulso",
+        "description": "Alcanza nivel de núcleo 2",
+        "emoji": "💠💠",
+        "requirement": 2,
+        "reward": 2500,
+        "rarity": "epic",
+        "category": "deepPrestige"
+    },
+    {
+        "id": "DEEP_LEVEL_3",
+        "name": "Tríada del Núcleo",
+        "description": "Alcanza nivel de núcleo 3",
+        "emoji": "🔷",
+        "requirement": 3,
+        "reward": 4000,
+        "rarity": "epic",
+        "category": "deepPrestige"
+    },
+    {
+        "id": "DEEP_LEVEL_5",
+        "name": "Operador Profundo",
+        "description": "Alcanza nivel de núcleo 5",
+        "emoji": "🌀",
+        "requirement": 5,
+        "reward": 9000,
+        "rarity": "legendary",
+        "category": "deepPrestige"
+    },
+    {
+        "id": "DEEP_LEVEL_10",
+        "name": "Corazón de la Máquina",
+        "description": "Alcanza nivel de núcleo 10",
+        "emoji": "🌌",
+        "requirement": 10,
+        "reward": 25000,
+        "rarity": "mythic",
+        "category": "deepPrestige"
+    },
+    {
+        "id": "DEEP_SHARDS_1",
+        "name": "Primer Fragmento",
+        "description": "Obtén tu primer fragmento de núcleo",
+        "emoji": "🔹",
+        "requirement": 1,
+        "reward": 800,
+        "rarity": "uncommon",
+        "category": "deepPrestige"
+    },
+    {
+        "id": "DEEP_SHARDS_10",
+        "name": "Colección Azul",
+        "description": "Obtén 10 fragmentos de núcleo en total",
+        "emoji": "🔷",
+        "requirement": 10,
+        "reward": 3000,
+        "rarity": "rare",
+        "category": "deepPrestige"
+    },
+    {
+        "id": "DEEP_SHARDS_25",
+        "name": "Reserva Cuántica",
+        "description": "Obtén 25 fragmentos de núcleo en total",
+        "emoji": "💎",
+        "requirement": 25,
+        "reward": 6500,
+        "rarity": "epic",
+        "category": "deepPrestige"
+    },
+    {
+        "id": "DEEP_SHARDS_50",
+        "name": "Cámara de Fragmentos",
+        "description": "Obtén 50 fragmentos de núcleo en total",
+        "emoji": "🧊",
+        "requirement": 50,
+        "reward": 12000,
+        "rarity": "legendary",
+        "category": "deepPrestige"
+    },
+    {
+        "id": "DEEP_SHARDS_100",
+        "name": "Núcleo Inagotable",
+        "description": "Obtén 100 fragmentos de núcleo en total",
+        "emoji": "♾️",
+        "requirement": 100,
+        "reward": 30000,
+        "rarity": "mythic",
+        "category": "deepPrestige"
+    },
+    {
+        "id": "DEEP_UPGRADES_1",
+        "name": "Primer Circuito Profundo",
+        "description": "Compra 1 nivel de mejora profunda",
+        "emoji": "🔧",
+        "requirement": 1,
+        "reward": 1200,
+        "rarity": "uncommon",
+        "category": "deepPrestige"
+    },
+    {
+        "id": "DEEP_UPGRADES_5",
+        "name": "Placa Expandida",
+        "description": "Compra 5 niveles de mejoras profundas",
+        "emoji": "🧩",
+        "requirement": 5,
+        "reward": 3500,
+        "rarity": "rare",
+        "category": "deepPrestige"
+    },
+    {
+        "id": "DEEP_UPGRADES_10",
+        "name": "Arquitecto del Núcleo",
+        "description": "Compra 10 niveles de mejoras profundas",
+        "emoji": "🏗️",
+        "requirement": 10,
+        "reward": 7500,
+        "rarity": "epic",
+        "category": "deepPrestige"
+    },
+    {
+        "id": "DEEP_UPGRADES_25",
+        "name": "Matriz Profunda",
+        "description": "Compra 25 niveles de mejoras profundas",
+        "emoji": "🧠",
+        "requirement": 25,
+        "reward": 18000,
+        "rarity": "legendary",
+        "category": "deepPrestige"
+    },
+    {
+        "id": "NEON_PLAY_1",
+        "name": "Primer Rush",
+        "description": "Juega Neon Rush por primera vez",
+        "emoji": "✦",
+        "requirement": 1,
+        "reward": 1000,
+        "rarity": "uncommon",
+        "category": "minigames"
+    },
+    {
+        "id": "NEON_PLAY_5",
+        "name": "Calentamiento Neón",
+        "description": "Juega Neon Rush 5 veces",
+        "emoji": "💫",
+        "requirement": 5,
+        "reward": 2500,
+        "rarity": "rare",
+        "category": "minigames"
+    },
+    {
+        "id": "NEON_PLAY_25",
+        "name": "Habitual del Rush",
+        "description": "Juega Neon Rush 25 veces",
+        "emoji": "🌠",
+        "requirement": 25,
+        "reward": 7000,
+        "rarity": "epic",
+        "category": "minigames"
+    },
+    {
+        "id": "NEON_PLAY_100",
+        "name": "Leyenda del Rush",
+        "description": "Juega Neon Rush 100 veces",
+        "emoji": "👾",
+        "requirement": 100,
+        "reward": 20000,
+        "rarity": "legendary",
+        "category": "minigames"
+    },
+    {
+        "id": "NEON_WIN_1",
+        "name": "Objetivo Adquirido",
+        "description": "Gana tu primera partida de Neon Rush",
+        "emoji": "🎯",
+        "requirement": 1,
+        "reward": 1500,
+        "rarity": "rare",
+        "category": "minigames"
+    },
+    {
+        "id": "NEON_WIN_10",
+        "name": "Cazador de Neón",
+        "description": "Gana 10 partidas de Neon Rush",
+        "emoji": "⚡",
+        "requirement": 10,
+        "reward": 5000,
+        "rarity": "epic",
+        "category": "minigames"
+    },
+    {
+        "id": "NEON_WIN_50",
+        "name": "Pulso Perfecto",
+        "description": "Gana 50 partidas de Neon Rush",
+        "emoji": "🏆",
+        "requirement": 50,
+        "reward": 15000,
+        "rarity": "legendary",
+        "category": "minigames"
+    },
+    {
+        "id": "NEON_SCORE_10",
+        "name": "Diez Destellos",
+        "description": "Consigue 10 puntos en una partida de Neon Rush",
+        "emoji": "🔟",
+        "requirement": 10,
+        "reward": 2500,
+        "rarity": "rare",
+        "category": "minigames"
+    },
+    {
+        "id": "NEON_SCORE_25",
+        "name": "Reflejos de Arcade",
+        "description": "Consigue 25 puntos en una partida de Neon Rush",
+        "emoji": "⚡🎯",
+        "requirement": 25,
+        "reward": 9000,
+        "rarity": "epic",
+        "category": "minigames"
+    },
+    {
+        "id": "SEASON_POINTS_10",
+        "name": "En Temporada",
+        "description": "Obtén 10 puntos de temporada",
+        "emoji": "🗓️",
+        "requirement": 10,
+        "reward": 2500,
+        "rarity": "rare",
+        "category": "seasons"
+    },
+    {
+        "id": "SEASON_POINTS_50",
+        "name": "Cronista del Arcade",
+        "description": "Obtén 50 puntos de temporada",
+        "emoji": "📜",
+        "requirement": 50,
+        "reward": 10000,
+        "rarity": "legendary",
+        "category": "seasons"
     }
 ];
 export const RARITY_LABELS = {

@@ -1,3 +1,4 @@
+import { exportStoredMedia, importStoredMedia } from './media-storage.js';
 import { createInitialState, normalizeState } from './state.js';
 const SAVE_KEY = 'clicksTheGameV3';
 const LEGACY_KEY = 'clickGameSave';
@@ -53,8 +54,12 @@ export function clearState() {
     localStorage.removeItem(SAVE_KEY);
     localStorage.removeItem(LEGACY_KEY);
 }
-export function exportState(state) {
-    const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+export async function exportState(state) {
+    const localBackgroundMedia = await exportStoredMedia(state.background);
+    const portable = localBackgroundMedia
+        ? { ...state, localBackgroundMedia }
+        : { ...state };
+    const blob = new Blob([JSON.stringify(portable, null, 2)], { type: 'application/json' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = `clicks-the-game-${new Date().toISOString().slice(0, 10)}.json`;
@@ -64,6 +69,10 @@ export function exportState(state) {
 export async function importState(file) {
     const text = await file.text();
     const parsed = JSON.parse(text);
+    if (parsed && typeof parsed === 'object') {
+        const portable = parsed;
+        await importStoredMedia(portable.localBackgroundMedia);
+    }
     const state = normalizeState(parsed);
     saveState(state);
     return state;
