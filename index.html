@@ -3,15 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; font-src 'self'; media-src 'none'; frame-src 'none'; worker-src 'none'; form-action 'none'; upgrade-insecure-requests">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; font-src 'self'; media-src 'self' blob:; frame-src 'none'; worker-src 'none'; form-action 'none'; upgrade-insecure-requests">
   <meta name="referrer" content="no-referrer">
-  <meta name="theme-color" content="#070713">
+  <meta name="application-name" content="CLICK! v2.5.1">
+<meta name="theme-color" content="#070713">
   <meta name="description" content="CLICK! es un videojuego incremental retro con mejoras, misiones, minijuegos, logros y prestigio.">
   <title>CLICK! — Retro Arcade</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23070713'/%3E%3Ccircle cx='32' cy='32' r='21' fill='%23ff3cac' stroke='%2300f5ff' stroke-width='3'/%3E%3Cpath d='M21 25h22v14H21z' fill='none' stroke='white' stroke-width='4'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="./assets/css/styles.css">
 </head>
 <body>
+  <div class="custom-background-layer" id="custom-background-layer" data-mode="default" aria-hidden="true">
+    <div class="custom-background-image" id="custom-background-image"></div>
+    <video class="custom-background-video" id="custom-background-video" muted loop playsinline preload="metadata"></video>
+    <div class="custom-background-overlay"></div>
+  </div>
   <a class="skip-link" href="#game-main">Ir al juego</a>
   <div class="pixel-sky" aria-hidden="true"></div>
   <div class="retro-grid" aria-hidden="true"></div>
@@ -41,7 +47,7 @@
           <span class="hud-icon" aria-hidden="true">👆</span>
           <span><small>CLICS</small><strong id="total-clicks-hud">0</strong></span>
         </div>
-        <div class="hud-stat">
+        <div class="hud-stat hud-stat-cps">
           <span class="hud-icon" aria-hidden="true">⚡</span>
           <span><small>CPS</small><strong id="cps-count">0</strong></span>
         </div>
@@ -56,9 +62,6 @@
         <button class="round-action" id="sound-toggle" type="button" aria-label="Activar o desactivar sonido">
           <svg class="sound-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"></path><path d="M15 9a4 4 0 0 1 0 6M18 6a8 8 0 0 1 0 12"></path></svg>
           <svg class="sound-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"></path><path d="m16 10 5 5m0-5-5 5"></path></svg>
-        </button>
-        <button class="round-action" id="theme-toggle" type="button" aria-label="Cambiar paleta">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9c0-1-.16-1.96-.46-2.86A7 7 0 0 1 12 3Z"></path></svg>
         </button>
         <button class="round-action" id="help-button" type="button" aria-label="Ver ayuda">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.8 9a2.4 2.4 0 0 1 4.5 1.2c0 1.8-2.3 2-2.3 3.6M12 17h.01"></path></svg>
@@ -96,7 +99,6 @@
           <span class="orb-label">Estadísticas</span>
         </button>
         <button class="orb-button orb-achievements" type="button" data-panel="achievements" aria-label="Abrir logros">
-          <span class="orb-emoji" aria-hidden="true">🏆</span>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v4a4 4 0 0 1-8 0zM8 6H4v2a4 4 0 0 0 4 4M16 6h4v2a4 4 0 0 1-4 4M12 12v5M8 21h8M9 17h6"></path></svg>
           <span class="orb-label">Logros</span>
         </button>
@@ -129,7 +131,7 @@
           </div>
           <div class="score-card score-card-right">
             <span>LOGROS</span>
-            <strong><span id="achievement-count-mini">0</span>/100 🏆</strong>
+            <strong><span id="achievement-count-mini">0</span>/<span id="achievement-total-mini">125</span> 🏆</strong>
           </div>
 
           <div class="click-machine">
@@ -170,23 +172,11 @@
           <button type="button" data-panel="stats"><span>🎮</span><small>ESTADO</small><strong>ONLINE</strong></button>
         </div>
       </section>
-
-      <aside class="achievement-terminal" aria-label="Vista rápida de logros">
-        <div class="terminal-head"><span>ACHIEVEMENT_FEED.EXE</span><i aria-hidden="true"></i></div>
-        <div class="terminal-count"><strong id="terminal-achievement-count">0</strong><span>/ 100</span></div>
-        <div class="terminal-preview" id="achievement-terminal-preview"></div>
-        <button class="terminal-button" type="button" data-panel="achievements">ABRIR COLECCIÓN <span>↗</span></button>
-      </aside>
     </div>
 
-    <footer class="arcade-footer">
-      <span>CLICK! v2</span>
-      <a class="github-star-gate" href="https://github.com/sjhonn/Clicks-TheGame" target="_blank" rel="noopener noreferrer" aria-label="Ver codigo fuente en GitHub">
-        <span aria-hidden="true">↗</span>
-        <strong>CODIGO FUENTE</strong>
-        <small>GitHub</small>
-      </a>
-      <span>DEV. JHONN PETHER</span>
+    <footer class="arcade-footer" aria-label="Información del juego">
+      <span class="footer-version">CLICK! v2.5.1</span>
+      <a class="footer-credit-link" href="https://github.com/sjhonn/Clicks-TheGame" target="_blank" rel="noopener noreferrer">DEV. JHONN PETHER</a>
     </footer>
   </main>
 
@@ -203,6 +193,23 @@
       </dl>
       <div class="prestige-warning"><span>⚠️</span><p>Conservarás tus logros y estadísticas. Las monedas y mejoras volverán a cero.</p></div>
       <button class="primary-button full-button" id="prestige-button" type="button"><span>PRESTIGIAR AHORA</span><small id="prestige-requirement">10K clics</small></button>
+      <section class="deep-prestige-zone" aria-labelledby="deep-prestige-title">
+        <div class="deep-prestige-heading">
+          <div><span class="eyebrow">NUCLEO PROFUNDO</span><strong id="deep-prestige-title">Prestigio profundo</strong><small>Reinicia la capa de prestigio normal para obtener fragmentos permanentes.</small></div>
+          <span class="deep-prestige-symbol" aria-hidden="true">💠</span>
+        </div>
+        <dl class="deep-prestige-metrics">
+          <div><dt>Nivel de nucleo</dt><dd id="deep-prestige-level">0</dd></div>
+          <div><dt>Fragmentos</dt><dd id="deep-shards">0</dd></div>
+          <div><dt>Bonus profundo</dt><dd id="deep-bonus">x1.00</dd></div>
+        </dl>
+        <button class="primary-button full-button deep-prestige-button" id="deep-prestige-button" type="button"><span>REINICIAR NUCLEO</span><small id="deep-prestige-requirement">Prestigio 5</small></button>
+        <div class="season-card">
+          <div><span class="eyebrow">TEMPORADA OPCIONAL</span><strong id="season-name">Temporada</strong><small>Participa solo si quieres; no requiere cuentas ni servicios externos.</small></div>
+          <div class="season-card-actions"><span><strong id="season-points">0</strong> pts</span><button class="secondary-button season-toggle" id="season-toggle" type="button" aria-pressed="true">Temporada activa</button></div>
+        </div>
+        <div class="deep-upgrade-grid" id="deep-upgrade-grid"></div>
+      </section>
     </section>
 
     <section class="modal-game-panel" id="panel-missions" data-panel-title="Misiones de hoy">
@@ -218,12 +225,13 @@
       <div class="modal-panel-heading">
         <span class="modal-panel-symbol">🕹️</span>
         <div><span class="eyebrow">BONUS STAGE</span><h2>Arcade</h2><p>Arriesga monedas para multiplicar tus ganancias.</p></div>
-        <span class="panel-counter">3 juegos</span>
+        <span class="panel-counter">4 juegos</span>
       </div>
       <div class="minigame-grid">
         <button class="minigame-card" type="button" data-minigame="roulette"><span class="minigame-emoji">🎡</span><span><strong>Ruleta neón</strong><small>Elige rojo, negro o verde</small></span><span class="cost">100 🪙</span></button>
         <button class="minigame-card" type="button" data-minigame="slots"><span class="minigame-emoji">🎰</span><span><strong>Pixel slots</strong><small>Consigue tres símbolos</small></span><span class="cost">75 🪙</span></button>
         <button class="minigame-card" type="button" data-minigame="guess"><span class="minigame-emoji">🔢</span><span><strong>Código secreto</strong><small>Adivina del 1 al 10</small></span><span class="cost">50 🪙</span></button>
+        <button class="minigame-card" id="neon-rush-card" type="button" data-minigame="neonRush" data-locked="true" disabled><span class="minigame-emoji">✦</span><span><strong>Neon Rush</strong><small>45 segundos de reflejos · Núcleo 1</small></span><span class="cost">BONUS</span></button>
       </div>
     </section>
 
@@ -251,6 +259,54 @@
         <div><span>🤖</span><dt>Monedas automáticas</dt><dd id="passive-coins">0</dd></div>
         <div><span>⏱️</span><dt>Tiempo jugado</dt><dd id="play-time">0m</dd></div>
       </dl>
+      <section class="background-settings" id="background-settings" aria-labelledby="background-settings-title">
+        <div class="background-settings-head">
+          <div>
+            <span class="eyebrow">PERSONALIZACIÓN LOCAL</span>
+            <h3 id="background-settings-title">Fondos de pantalla</h3>
+            <p>Los archivos permanecen en este dispositivo. No se suben a ningún servidor.</p>
+          </div>
+          <button class="secondary-button background-remove" type="button" data-background-action="remove">Quitar fondo</button>
+        </div>
+        <div class="background-unlock-grid">
+          <article class="background-unlock-card">
+            <div class="background-unlock-title"><strong>Imagen</strong><span id="background-image-status">Faltan 1K clics</span></div>
+            <p>Se desbloquea a los 1,000 clics totales.</p>
+            <div class="background-presets" aria-label="Fondos prediseñados">
+              <button type="button" data-background-preset="neonGrid"><img src="./assets/backgrounds/neon-grid.svg" alt=""><span>Neon Grid</span></button>
+              <button type="button" data-background-preset="synthSunset"><img src="./assets/backgrounds/synth-sunset.svg" alt=""><span>Synth Sunset</span></button>
+              <button type="button" data-background-preset="cyberCircuit"><img src="./assets/backgrounds/cyber-circuit.svg" alt=""><span>Cyber Circuit</span></button>
+            </div>
+            <button class="secondary-button full-button" type="button" data-background-action="upload-image">Usar mi imagen</button>
+          </article>
+          <article class="background-unlock-card">
+            <div class="background-unlock-title"><strong>Video</strong><span id="background-video-status">Faltan 5K clics</span></div>
+            <p>Se desbloquea a los 5,000 clics. MP4/WebM, máximo 25 MB, loop y sin sonido.</p>
+            <div class="background-video-actions">
+              <button class="secondary-button" type="button" data-background-action="upload-video">Usar mi video</button>
+              <button class="secondary-button" type="button" data-background-action="toggle-video" disabled>Pausar video</button>
+            </div>
+          </article>
+        </div>
+        
+        <div class="ui-palette-settings" id="ui-palette-picker">
+          <div class="ui-palette-copy">
+            <span class="eyebrow">PALETA DE INTERFAZ</span>
+            <strong>Color de paneles y luces</strong>
+            <small>Elige una combinación. Se guarda con tu partida y se aplica al instante.</small>
+          </div>
+          <div class="ui-palette-grid" role="group" aria-label="Paleta de colores de la interfaz">
+            <button type="button" data-ui-palette="arcade" aria-pressed="false"><span class="palette-swatches palette-arcade" aria-hidden="true"><i></i><i></i><i></i></span><strong>Arcade</strong></button>
+            <button type="button" data-ui-palette="matrix" aria-pressed="false"><span class="palette-swatches palette-matrix" aria-hidden="true"><i></i><i></i><i></i></span><strong>Matrix</strong></button>
+            <button type="button" data-ui-palette="violet" aria-pressed="false"><span class="palette-swatches palette-violet" aria-hidden="true"><i></i><i></i><i></i></span><strong>Violeta</strong></button>
+            <button type="button" data-ui-palette="sunset" aria-pressed="false"><span class="palette-swatches palette-sunset" aria-hidden="true"><i></i><i></i><i></i></span><strong>Sunset</strong></button>
+            <button type="button" data-ui-palette="ice" aria-pressed="false"><span class="palette-swatches palette-ice" aria-hidden="true"><i></i><i></i><i></i></span><strong>Ice</strong></button>
+            <button type="button" data-ui-palette="amber" aria-pressed="false"><span class="palette-swatches palette-amber" aria-hidden="true"><i></i><i></i><i></i></span><strong>Ámbar</strong></button>
+          </div>
+        </div>
+        <input id="background-image-input" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+        <input id="background-video-input" type="file" accept="video/mp4,video/webm" hidden>
+      </section>
       <div class="save-actions">
         <button class="secondary-button" id="save-button" type="button"><span>💾</span> Guardar</button>
         <button class="secondary-button" id="export-button" type="button"><span>📤</span> Exportar</button>
@@ -262,9 +318,9 @@
 
     <section class="modal-game-panel" id="panel-achievements" data-panel-title="Logros">
       <div class="modal-panel-heading">
-        <span class="modal-panel-symbol">🏆</span>
+        <img class="achievement-heading-icon" src="./assets/icons/achievements/special.svg" alt="" aria-hidden="true">
         <div><span class="eyebrow">ACHIEVEMENT VAULT</span><h2>Logros</h2><p>Revisa tu colección y descubre el siguiente desafío.</p></div>
-        <button class="secondary-button" id="achievements-button" type="button">VER LOS 100</button>
+        <button class="secondary-button" id="achievements-button" type="button">VER LOS 125</button>
       </div>
       <div class="achievement-preview" id="achievement-preview"></div>
     </section>

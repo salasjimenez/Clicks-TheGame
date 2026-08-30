@@ -1,8 +1,13 @@
+import { exportStoredMedia, importStoredMedia, type PortableBackgroundMedia } from './media-storage.js';
 import { createInitialState, normalizeState } from './state.js';
 import type { GameState } from '../types.js';
 
 const SAVE_KEY = 'clicksTheGameV3';
 const LEGACY_KEY = 'clickGameSave';
+
+interface PortableSave extends GameState {
+  localBackgroundMedia?: PortableBackgroundMedia;
+}
 
 function migrateLegacy(raw: string): GameState | null {
   try {
@@ -53,7 +58,6 @@ export function loadState(): GameState {
 }
 
 export function saveState(state: GameState): void {
-  // El guardado se concentra aquí para mantener una única versión válida del progreso.
   state.lastSavedAt = Date.now();
   localStorage.setItem(SAVE_KEY, JSON.stringify(state));
 }
@@ -63,8 +67,12 @@ export function clearState(): void {
   localStorage.removeItem(LEGACY_KEY);
 }
 
-export function exportState(state: GameState): void {
-  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+export async function exportState(state: GameState): Promise<void> {
+  const localBackgroundMedia = await exportStoredMedia(state.background);
+  const portable: PortableSave = localBackgroundMedia
+    ? { ...state, localBackgroundMedia }
+    : { ...state };
+  const blob = new Blob([JSON.stringify(portable, null, 2)], { type: 'application/json' });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
   link.download = `clicks-the-game-${new Date().toISOString().slice(0, 10)}.json`;
@@ -75,6 +83,10 @@ export function exportState(state: GameState): void {
 export async function importState(file: File): Promise<GameState> {
   const text = await file.text();
   const parsed = JSON.parse(text) as unknown;
+  if (parsed && typeof parsed === 'object') {
+    const portable = parsed as Partial<PortableSave>;
+    await importStoredMedia(portable.localBackgroundMedia);
+  }
   const state = normalizeState(parsed);
   saveState(state);
   return state;

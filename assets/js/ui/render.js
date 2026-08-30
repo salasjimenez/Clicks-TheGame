@@ -1,9 +1,44 @@
 import { ACHIEVEMENTS, RARITY_LABELS } from '../data/achievements.js';
+import { DEEP_UPGRADES } from '../data/deep-prestige.js';
+import { currentSeason } from '../data/seasons.js';
 import { CONSUMABLES, UPGRADES } from '../data/store.js';
 import { GameAudio } from '../game/audio.js';
 import { clearState, exportState, importState, saveState } from '../game/storage.js';
+import { achievementIconMarkup } from './achievement-icons.js';
 import { byId, escapeHtml, formatDuration } from './dom.js';
 import { spawnClickParticle } from './particles.js';
+const CLICK_PALETTES = {
+    arcade: [
+        ['#ff3cac', '#7a5cff', '#00f5ff'],
+        ['#00f5ff', '#2563eb', '#ff3cac'],
+        ['#a855f7', '#ff3cac', '#00f5ff']
+    ],
+    matrix: [
+        ['#6dff6d', '#16a34a', '#c8ff5e'],
+        ['#9cff57', '#22c55e', '#39ffb6'],
+        ['#d7ff4f', '#34d399', '#86efac']
+    ],
+    violet: [
+        ['#c084fc', '#7c3aed', '#f0abfc'],
+        ['#a78bfa', '#8b5cf6', '#e879f9'],
+        ['#d8b4fe', '#6d28d9', '#c4b5fd']
+    ],
+    sunset: [
+        ['#ff6b35', '#ef4444', '#ffb347'],
+        ['#fb7185', '#f97316', '#fde047'],
+        ['#ff4d6d', '#dc2626', '#fb923c']
+    ],
+    ice: [
+        ['#67e8f9', '#2563eb', '#bae6fd'],
+        ['#22d3ee', '#3b82f6', '#93c5fd'],
+        ['#a5f3fc', '#0ea5e9', '#60a5fa']
+    ],
+    amber: [
+        ['#fbbf24', '#d97706', '#fde68a'],
+        ['#f59e0b', '#ea580c', '#fef08a'],
+        ['#facc15', '#c2410c', '#fdba74']
+    ]
+};
 export class GameUI {
     engine;
     audio = new GameAudio();
@@ -26,24 +61,39 @@ export class GameUI {
     modal = byId('modal-panel');
     modalContent = byId('modal-content');
     panelSources = byId('panel-sources');
-    terminalPreview = byId('achievement-terminal-preview');
     toastRegion = byId('toast-region');
     importFile = byId('import-file');
     comboConsole = byId('combo-console');
     imageLabButton = byId('image-lab-button');
-    imageLabFile = null;
-    imageLabFormat = 'image/png';
-    imagePreviewUrl = '';
+    backgroundSettings = byId('background-settings');
+    backgroundImageInput = byId('background-image-input');
+    backgroundVideoInput = byId('background-video-input');
+    deepUpgradeGrid = byId('deep-upgrade-grid');
+    neonRushCard = byId('neon-rush-card');
     lastMissionSignature = '';
     lastStoreSignature = '';
     lastAchievementSignature = '__initial__';
+    lastDeepSignature = '';
+    lastBackgroundSignature = '';
+    lastUiPalette = '';
+    backgroundSyncSequence = 0;
+    clickPaletteIndex = 0;
+    clicksSincePaletteChange = 0;
+    lastPaletteAt = 0;
+    lastCoinAnimationAt = 0;
+    coinAnimationFrame = 0;
     lastFocused = null;
     mountedPanel = null;
+    featureCleanup = null;
     constructor(engine) {
         this.engine = engine;
+        this.imageLabButton.hidden = false;
         this.bindEvents();
         this.updateClock();
-        window.setInterval(() => this.updateClock(), 1000);
+        window.setInterval(() => {
+            if (document.visibilityState === 'visible')
+                this.updateClock();
+        }, 1000);
         this.engine.onToast((message) => this.showToast(message));
         this.engine.subscribe((state, derived) => this.render(state, derived));
     }
@@ -55,6 +105,12 @@ export class GameUI {
         this.toastRegion.appendChild(toast);
         if (message.tone === 'success')
             this.audio.playSuccess(this.engine.state.soundEnabled);
+        if (message.text.includes('Logro:'))
+            this.flashBody('fx-achievement');
+        else if (message.text.includes('Núcleo reiniciado'))
+            this.flashBody('fx-deep-prestige');
+        else if (message.text.includes('Prestigio'))
+            this.flashBody('fx-prestige');
         window.setTimeout(() => {
             toast.classList.add('is-leaving');
             window.setTimeout(() => toast.remove(), 190);
@@ -64,9 +120,7 @@ export class GameUI {
         this.clickButton.addEventListener('click', (event) => {
             event.preventDefault();
             const rect = this.clickButton.getBoundingClientRect();
-            const x = event.clientX || rect.left + rect.width / 2;
-            const y = event.clientY || rect.top + rect.height / 2;
-            this.performClick(x, y);
+            this.performClick(event.clientX || rect.left + rect.width / 2, event.clientY || rect.top + rect.height / 2);
         });
         document.addEventListener('keydown', (event) => {
             const target = event.target;
@@ -79,7 +133,6 @@ export class GameUI {
             if (event.key === 'Escape' && !this.modalBackdrop.hidden)
                 this.closeModal();
         });
-        byId('theme-toggle').addEventListener('click', () => this.engine.toggleTheme());
         byId('sound-toggle').addEventListener('click', () => this.engine.toggleSound());
         byId('help-button').addEventListener('click', () => this.openHelp());
         byId('achievements-button').addEventListener('click', () => this.openAchievements());
@@ -87,17 +140,37 @@ export class GameUI {
             saveState(this.engine.state);
             this.showToast({ text: '💾 Progreso guardado.', tone: 'success' });
         });
-        byId('export-button').addEventListener('click', () => exportState(this.engine.state));
+        byId('export-button').addEventListener('click', () => {
+            void exportState(this.engine.state).catch(() => this.showToast({ text: 'No se pudo exportar la partida.', tone: 'danger' }));
+        });
         byId('import-button').addEventListener('click', () => this.importFile.click());
         byId('reset-button').addEventListener('click', () => this.openResetConfirmation());
         byId('prestige-button').addEventListener('click', () => this.openPrestigeConfirmation());
+        byId('deep-prestige-button').addEventListener('click', () => this.openDeepPrestigeConfirmation());
+        byId('season-toggle').addEventListener('click', () => this.engine.toggleSeason());
         byId('modal-close').addEventListener('click', () => this.closeModal());
-        this.imageLabButton.addEventListener('click', () => this.openImageLab());
+        this.imageLabButton.addEventListener('click', () => void this.openImageLab());
+        this.backgroundSettings.addEventListener('click', (event) => void this.handleBackgroundAction(event));
+        this.backgroundImageInput.addEventListener('change', () => void this.handleBackgroundFile('image'));
+        this.backgroundVideoInput.addEventListener('change', () => void this.handleBackgroundFile('video'));
         document.querySelectorAll('[data-panel]').forEach((button) => {
             button.addEventListener('click', () => {
                 const panel = button.dataset.panel;
                 if (panel)
                     this.openPanel(panel);
+            });
+        });
+        document.querySelectorAll('[data-minigame]').forEach((button) => {
+            button.addEventListener('click', () => {
+                const game = button.dataset.minigame;
+                if (game === 'roulette')
+                    this.openRoulette();
+                if (game === 'slots')
+                    this.openSlots();
+                if (game === 'guess')
+                    this.openGuess();
+                if (game === 'neonRush')
+                    void this.openNeonRush();
             });
         });
         this.modalBackdrop.addEventListener('pointerdown', (event) => {
@@ -129,6 +202,15 @@ export class GameUI {
             if (id)
                 this.engine.purchase(id);
         });
+        this.deepUpgradeGrid.addEventListener('click', (event) => {
+            const target = event.target;
+            if (!(target instanceof Element))
+                return;
+            const button = target.closest('[data-deep-upgrade]');
+            const id = button?.dataset.deepUpgrade;
+            if (id)
+                this.engine.purchaseDeepUpgrade(id);
+        });
         this.missionList.addEventListener('click', (event) => {
             const target = event.target;
             if (!(target instanceof Element))
@@ -137,40 +219,28 @@ export class GameUI {
             if (button?.dataset.missionId)
                 this.engine.claimMission(button.dataset.missionId);
         });
-        document.querySelectorAll('[data-minigame]').forEach((button) => {
-            button.addEventListener('click', () => {
-                if (button.dataset.minigame === 'roulette')
-                    this.openRoulette();
-                if (button.dataset.minigame === 'slots')
-                    this.openSlots();
-                if (button.dataset.minigame === 'guess')
-                    this.openGuess();
-            });
-        });
         this.modalContent.addEventListener('click', (event) => void this.handleModalAction(event));
-        this.modalContent.addEventListener('change', (event) => void this.handleModalChange(event));
     }
     render(state, derived) {
-        document.documentElement.dataset.theme = state.theme;
         byId('sound-toggle').classList.toggle('is-muted', !state.soundEnabled);
-        this.coinCount.textContent = this.engine.format(state.coins);
+        this.renderCountUp(this.coinCount, state.coins);
         this.cpsCount.textContent = this.engine.format(derived.cps);
         this.clickPower.textContent = `+${this.engine.format(derived.clickPower)} por clic`;
         byId('prestige-level-mini').textContent = String(state.prestigeLevel);
         byId('prestige-level-hud').textContent = String(state.prestigeLevel);
         byId('total-clicks-hud').textContent = this.engine.format(state.manualClicks);
-        byId('multiplier-hud').textContent = `x${(derived.prestigeBonus * derived.comboMultiplier).toFixed(2)}`;
+        byId('multiplier-hud').textContent = `x${(derived.prestigeBonus * derived.deepProductionMultiplier * derived.comboMultiplier).toFixed(2)}`;
         byId('quick-prestige-points').textContent = String(state.prestigePoints);
-        byId('achievement-count-mini').textContent = String(state.unlockedAchievements.length);
-        byId('terminal-achievement-count').textContent = String(state.unlockedAchievements.length);
-        byId('daily-streak').textContent = String(state.daily.streak);
         byId('prestige-level').textContent = String(state.prestigeLevel);
         byId('prestige-points').textContent = String(state.prestigePoints);
         byId('prestige-bonus').textContent = `x${derived.prestigeBonus.toFixed(2)}`;
-        byId('prestige-requirement').textContent = `${this.engine.format(this.engine.prestigeRequirement)} clics`;
-        const prestigeButton = byId('prestige-button');
-        prestigeButton.disabled = this.engine.prestigeGain < 1;
-        prestigeButton.title = this.engine.prestigeGain > 0 ? `Recibirás ${this.engine.prestigeGain} puntos` : 'Aún no alcanzas el requisito';
+        byId('prestige-requirement').textContent = this.engine.prestigeGain > 0
+            ? `+${this.engine.prestigeGain} puntos`
+            : `${this.engine.format(this.engine.prestigeRequirement)} clics`;
+        byId('prestige-button').disabled = this.engine.prestigeGain < 1;
+        byId('daily-streak').textContent = String(state.daily.streak);
+        byId('achievement-count-mini').textContent = String(state.unlockedAchievements.length);
+        byId('achievement-total-mini').textContent = String(ACHIEVEMENTS.length);
         byId('lifetime-coins').textContent = this.engine.format(state.lifetimeCoins);
         byId('manual-clicks').textContent = this.engine.format(state.manualClicks);
         byId('highest-coins').textContent = this.engine.format(state.stats.highestCoins);
@@ -183,11 +253,44 @@ export class GameUI {
         byId('combo-value').textContent = `x${derived.comboMultiplier.toFixed(2)}`;
         byId('combo-count').textContent = `${state.combo}/${derived.comboLimit} golpes`;
         byId('combo-progress').style.width = `${Math.min(100, (state.combo / derived.comboLimit) * 100)}%`;
+        this.renderDeepPrestige(state, derived);
         this.renderEvent(state);
         this.renderNextAchievement(state);
-        this.renderMissions(state);
+        this.renderMissions(state, derived);
         this.renderStore(state, derived);
         this.renderAchievementPreview(state);
+        this.renderBackgroundControls(state);
+    }
+    renderDeepPrestige(state, derived) {
+        byId('deep-prestige-level').textContent = String(state.deepPrestige.level);
+        byId('deep-shards').textContent = String(state.deepPrestige.shards);
+        byId('deep-bonus').textContent = `x${derived.deepProductionMultiplier.toFixed(2)}`;
+        byId('deep-prestige-requirement').textContent = this.engine.deepPrestigeGain > 0
+            ? `+${this.engine.deepPrestigeGain} fragmentos`
+            : `Prestigio ${this.engine.deepPrestigeRequirement}`;
+        byId('deep-prestige-button').disabled = this.engine.deepPrestigeGain < 1;
+        const season = currentSeason();
+        byId('season-name').textContent = `${season.emoji} ${season.name}`;
+        byId('season-points').textContent = String(state.season.points);
+        const seasonToggle = byId('season-toggle');
+        seasonToggle.textContent = state.season.enabled ? 'Temporada activa' : 'Temporada pausada';
+        seasonToggle.setAttribute('aria-pressed', String(state.season.enabled));
+        this.neonRushCard.disabled = state.deepPrestige.level < 1;
+        this.neonRushCard.dataset.locked = state.deepPrestige.level < 1 ? 'true' : 'false';
+        const signature = JSON.stringify([state.deepPrestige.upgrades, state.deepPrestige.shards]);
+        if (signature === this.lastDeepSignature)
+            return;
+        this.lastDeepSignature = signature;
+        this.deepUpgradeGrid.innerHTML = DEEP_UPGRADES.map((upgrade) => {
+            const level = state.deepPrestige.upgrades[upgrade.id];
+            const maximum = level >= upgrade.maxLevel;
+            const price = this.engine.getDeepUpgradePrice(upgrade.id);
+            return `<article class="deep-upgrade-card">
+        <span class="store-emoji" aria-hidden="true">${upgrade.emoji}</span>
+        <div class="store-info"><strong>${escapeHtml(upgrade.name)}</strong><small>${escapeHtml(upgrade.description)}</small><span class="store-level">Nivel ${level}/${upgrade.maxLevel}</span></div>
+        <button class="buy-button" type="button" data-deep-upgrade="${upgrade.id}" ${maximum || state.deepPrestige.shards < price ? 'disabled' : ''}>${maximum ? 'MAX' : `${price} 💠`}</button>
+      </article>`;
+        }).join('');
     }
     renderEvent(state) {
         const event = state.activeEvent;
@@ -198,7 +301,9 @@ export class GameUI {
         this.eventTitle.textContent = event.title;
         this.eventDescription.textContent = event.description;
         const remaining = Math.max(0, Math.ceil((event.endsAt - Date.now()) / 1000));
-        this.eventTimer.textContent = `00:${String(remaining).padStart(2, '0')}`;
+        const minutes = Math.floor(remaining / 60);
+        const seconds = remaining % 60;
+        this.eventTimer.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     }
     renderNextAchievement(state) {
         const clickAchievements = ACHIEVEMENTS
@@ -220,14 +325,14 @@ export class GameUI {
         }
         const previous = [...clickAchievements].reverse().find((achievement) => achievement.requirement <= state.manualClicks)?.requirement ?? 0;
         const percentage = Math.min(100, Math.max(0, ((state.manualClicks - previous) / (next.requirement - previous)) * 100));
-        name.textContent = `${next.emoji} ${next.name}`;
+        name.innerHTML = `${achievementIconMarkup(next.category, false, 'achievement-inline-icon')}<span>${escapeHtml(next.name)}</span>`;
         fill.style.width = `${percentage}%`;
         progress.setAttribute('aria-valuenow', String(Math.round(percentage)));
         value.textContent = this.engine.format(state.manualClicks);
         target.textContent = this.engine.format(next.requirement);
     }
-    renderMissions(state) {
-        const signature = JSON.stringify(state.daily.missions.map((mission) => [mission.id, Math.floor(mission.progress), mission.claimed]));
+    renderMissions(state, derived) {
+        const signature = JSON.stringify([state.daily.missions.map((mission) => [mission.id, Math.floor(mission.progress), mission.claimed]), derived.missionRewardMultiplier]);
         if (signature === this.lastMissionSignature)
             return;
         this.lastMissionSignature = signature;
@@ -238,23 +343,19 @@ export class GameUI {
         this.missionList.innerHTML = state.daily.missions.map((mission) => {
             const percentage = Math.min(100, (mission.progress / mission.target) * 100);
             const ready = mission.progress >= mission.target;
-            const buttonText = mission.claimed ? 'Listo' : ready ? 'Reclamar' : `${this.engine.format(mission.reward)} 🪙`;
+            const reward = Math.max(1, Math.floor(mission.reward * derived.missionRewardMultiplier));
+            const buttonText = mission.claimed ? 'Listo' : ready ? 'Reclamar' : `${this.engine.format(reward)} 🪙`;
             return `<article class="mission-card${ready ? ' is-complete' : ''}">
         <span class="mission-emoji" aria-hidden="true">${mission.emoji}</span>
-        <div class="mission-info">
-          <strong>${escapeHtml(mission.title)}</strong>
-          <small>${escapeHtml(mission.description)}</small>
-          <div class="mission-progress-row">
-            <div class="progress-track"><span style="width:${percentage}%"></span></div>
-            <span>${this.engine.format(mission.progress)}/${this.engine.format(mission.target)}</span>
-          </div>
+        <div class="mission-info"><strong>${escapeHtml(mission.title)}</strong><small>${escapeHtml(mission.description)}</small>
+          <div class="mission-progress-row"><div class="progress-track"><span style="width:${percentage}%"></span></div><span>${this.engine.format(mission.progress)}/${this.engine.format(mission.target)}</span></div>
         </div>
         <button class="claim-button${mission.claimed ? ' is-claimed' : ''}" type="button" data-mission-id="${mission.id}" ${mission.claimed || !ready ? 'disabled' : ''}>${buttonText}</button>
       </article>`;
         }).join('');
     }
     renderStore(state, derived) {
-        const signature = JSON.stringify([state.upgrades, derived.storeDiscount, state.turboUntil > Date.now()]);
+        const signature = JSON.stringify([state.upgrades, derived.storeDiscount, state.turboUntil > Date.now(), state.prestigePoints]);
         if (signature === this.lastStoreSignature)
             return;
         this.lastStoreSignature = signature;
@@ -263,36 +364,18 @@ export class GameUI {
             const level = state.upgrades[item.id];
             const maximum = item.maxLevel !== undefined && level >= item.maxLevel;
             const price = this.engine.getUpgradePrice(item.id);
-            return `<article class="store-card">
-        <span class="store-emoji" aria-hidden="true">${item.emoji}</span>
-        <div class="store-info">
-          <strong>${escapeHtml(item.name)}</strong>
-          <small>${escapeHtml(item.description)}</small>
-          <span class="store-level">Nivel ${level}${item.maxLevel !== undefined ? `/${item.maxLevel}` : ''}</span>
-        </div>
-        <button class="store-buy" type="button" data-store-item="${item.id}" ${maximum ? 'disabled' : ''}>
-          <span>${maximum ? 'Nivel máximo' : 'Mejorar'}</span>
-          <span class="store-price">${maximum ? '✓' : `${this.engine.format(price)} 🪙`}</span>
-        </button>
-      </article>`;
-        }).join('');
+            return `<article class="store-card"><span class="store-emoji" aria-hidden="true">${item.emoji}</span>
+        <div class="store-info"><strong>${escapeHtml(item.name)}</strong><small>${escapeHtml(item.description)}</small><span class="store-level">Nivel ${level}${item.maxLevel !== undefined ? `/${item.maxLevel}` : ''}</span></div>
+        <button class="buy-button" type="button" data-store-item="${item.id}" ${maximum || state.coins < price ? 'disabled' : ''}>${maximum ? 'MAX' : `${this.engine.format(price)} 🪙`}</button></article>`;
+        });
         const consumables = CONSUMABLES.map((item) => {
-            const active = item.id === 'timeBoost' && state.turboUntil > Date.now();
+            const available = item.currency === 'coins' ? state.coins >= item.price : state.prestigePoints >= item.price;
             const currency = item.currency === 'coins' ? '🪙' : '💎';
-            return `<article class="store-card${item.currency === 'prestige' ? ' is-premium' : ''}">
-        <span class="store-emoji" aria-hidden="true">${item.emoji}</span>
-        <div class="store-info">
-          <strong>${escapeHtml(item.name)}</strong>
-          <small>${escapeHtml(item.description)}</small>
-          <span class="store-level">${active ? 'Activo' : item.currency === 'prestige' ? 'Prestigio' : 'Consumible'}</span>
-        </div>
-        <button class="store-buy" type="button" data-store-item="${item.id}">
-          <span>${active ? 'Extender' : 'Comprar'}</span>
-          <span class="store-price">${this.engine.format(item.price)} ${currency}</span>
-        </button>
-      </article>`;
-        }).join('');
-        this.storeGrid.innerHTML = upgrades + consumables;
+            return `<article class="store-card store-consumable"><span class="store-emoji" aria-hidden="true">${item.emoji}</span>
+        <div class="store-info"><strong>${escapeHtml(item.name)}</strong><small>${escapeHtml(item.description)}</small><span class="store-level">Consumible</span></div>
+        <button class="buy-button" type="button" data-store-item="${item.id}" ${available ? '' : 'disabled'}>${this.engine.format(item.price)} ${currency}</button></article>`;
+        });
+        this.storeGrid.innerHTML = [...upgrades, ...consumables].join('');
     }
     renderAchievementPreview(state) {
         const signature = state.unlockedAchievements.join('|');
@@ -303,50 +386,222 @@ export class GameUI {
         const locked = ACHIEVEMENTS.filter((achievement) => !state.unlockedAchievements.includes(achievement.id) && !achievement.secret);
         const preview = [...unlocked.slice(-5).reverse(), ...locked].slice(0, 5);
         this.achievementPreview.innerHTML = preview.map((achievement) => this.achievementMarkup(achievement, state.unlockedAchievements.includes(achievement.id))).join('');
-        this.terminalPreview.innerHTML = preview.slice(0, 4).map((achievement) => {
-            const isUnlocked = state.unlockedAchievements.includes(achievement.id);
-            return `<article class="terminal-achievement${isUnlocked ? '' : ' is-locked'}"><span>${isUnlocked ? achievement.emoji : '🔒'}</span><div><strong>${isUnlocked ? escapeHtml(achievement.name) : 'BLOQUEADO'}</strong><small>${isUnlocked ? RARITY_LABELS[achievement.rarity] : `${this.engine.format(achievement.requirement)} REQUERIDOS`}</small></div></article>`;
-        }).join('');
     }
     achievementMarkup(achievement, unlocked) {
         const hidden = achievement.secret && !unlocked;
         return `<article class="achievement-card${unlocked ? '' : ' is-locked'}" data-rarity="${achievement.rarity}">
-      <span class="achievement-emoji" aria-hidden="true">${hidden ? '🔒' : achievement.emoji}</span>
+      ${achievementIconMarkup(achievement.category, hidden || !unlocked, 'achievement-icon')}
       <strong>${hidden ? 'Logro secreto' : escapeHtml(achievement.name)}</strong>
       <small>${unlocked ? RARITY_LABELS[achievement.rarity] : hidden ? 'Requisito oculto' : this.engine.format(achievement.requirement)}</small>
     </article>`;
     }
     performClick(x, y) {
         const result = this.engine.click();
+        this.maybeRotateClickPalette();
         this.audio.playClick(this.engine.state.soundEnabled, result.critical);
         spawnClickParticle(x, y, `+${this.engine.format(result.amount)}`, result.critical);
-        this.clickButton.classList.remove('is-clicking');
+        this.clickButton.classList.remove('is-clicking', 'is-critical', 'is-combo-flash');
         requestAnimationFrame(() => {
             this.clickButton.classList.add('is-clicking');
-            window.setTimeout(() => this.clickButton.classList.remove('is-clicking'), 110);
+            if (result.critical)
+                this.clickButton.classList.add('is-critical');
+            if (result.combo >= 10 && result.combo % 10 === 0)
+                this.clickButton.classList.add('is-combo-flash');
+            window.setTimeout(() => this.clickButton.classList.remove('is-clicking', 'is-critical', 'is-combo-flash'), 160);
         });
     }
+    renderCountUp(element, value) {
+        const formatted = this.engine.format(value);
+        if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+            element.textContent = formatted;
+            element.dataset.numericValue = String(value);
+            return;
+        }
+        const previous = Number(element.dataset.numericValue ?? value);
+        element.dataset.numericValue = String(value);
+        const now = performance.now();
+        if (!Number.isFinite(previous) || previous === value || now - this.lastCoinAnimationAt < 450) {
+            element.textContent = formatted;
+            return;
+        }
+        this.lastCoinAnimationAt = now;
+        if (this.coinAnimationFrame)
+            cancelAnimationFrame(this.coinAnimationFrame);
+        const startedAt = performance.now();
+        const duration = 180;
+        const animate = (time) => {
+            const progress = Math.min(1, (time - startedAt) / duration);
+            const eased = 1 - (1 - progress) ** 3;
+            element.textContent = this.engine.format(previous + (value - previous) * eased);
+            element.classList.toggle('is-number-updating', progress < 1);
+            if (progress < 1)
+                this.coinAnimationFrame = requestAnimationFrame(animate);
+            else
+                element.textContent = formatted;
+        };
+        this.coinAnimationFrame = requestAnimationFrame(animate);
+    }
+    applyClickPalette(index = this.clickPaletteIndex) {
+        const palettes = CLICK_PALETTES[this.engine.state.background.palette];
+        const [primary, secondary, ring] = palettes[index] ?? palettes[0];
+        const machine = this.clickButton.closest('.click-machine');
+        if (!machine)
+            return;
+        machine.style.setProperty('--click-accent', primary);
+        machine.style.setProperty('--click-accent-2', secondary);
+        machine.style.setProperty('--click-ring', ring);
+    }
+    maybeRotateClickPalette() {
+        this.clicksSincePaletteChange += 1;
+        const now = performance.now();
+        if (this.clicksSincePaletteChange < 4 || now - this.lastPaletteAt < 900)
+            return;
+        this.clicksSincePaletteChange = 0;
+        this.lastPaletteAt = now;
+        const palettes = CLICK_PALETTES[this.engine.state.background.palette];
+        let next = this.clickPaletteIndex;
+        while (next === this.clickPaletteIndex && palettes.length > 1)
+            next = Math.floor(Math.random() * palettes.length);
+        this.clickPaletteIndex = next;
+        this.applyClickPalette(next);
+    }
+    renderBackgroundControls(state) {
+        document.body.dataset.uiPalette = state.background.palette;
+        this.backgroundSettings.querySelectorAll('[data-ui-palette]').forEach((button) => {
+            const selected = button.dataset.uiPalette === state.background.palette;
+            button.classList.toggle('is-selected', selected);
+            button.setAttribute('aria-pressed', String(selected));
+        });
+        if (this.lastUiPalette !== state.background.palette) {
+            this.lastUiPalette = state.background.palette;
+            this.clickPaletteIndex = 0;
+            this.applyClickPalette(0);
+        }
+        const imageUnlocked = state.manualClicks >= 1000;
+        const videoUnlocked = state.manualClicks >= 5000;
+        const imageRemaining = Math.max(0, 1000 - state.manualClicks);
+        const videoRemaining = Math.max(0, 5000 - state.manualClicks);
+        const imageStatus = byId('background-image-status');
+        const videoStatus = byId('background-video-status');
+        imageStatus.textContent = imageUnlocked ? 'Desbloqueado' : `Faltan ${this.engine.format(imageRemaining)} clics`;
+        videoStatus.textContent = videoUnlocked ? 'Desbloqueado' : `Faltan ${this.engine.format(videoRemaining)} clics`;
+        this.backgroundSettings.querySelectorAll('[data-background-preset], [data-background-action="upload-image"]').forEach((button) => {
+            button.disabled = !imageUnlocked;
+        });
+        this.backgroundSettings.querySelectorAll('[data-background-action="upload-video"]').forEach((button) => {
+            button.disabled = !videoUnlocked;
+        });
+        const pauseButton = this.backgroundSettings.querySelector('[data-background-action="toggle-video"]');
+        if (pauseButton) {
+            pauseButton.disabled = state.background.mode !== 'customVideo';
+            pauseButton.textContent = state.background.videoPaused ? 'Reproducir video' : 'Pausar video';
+        }
+        this.backgroundSettings.querySelectorAll('[data-background-preset]').forEach((button) => {
+            button.classList.toggle('is-selected', state.background.mode === 'preset' && button.dataset.backgroundPreset === state.background.preset);
+        });
+        const signature = JSON.stringify(state.background);
+        if (signature === this.lastBackgroundSignature)
+            return;
+        this.lastBackgroundSignature = signature;
+        void this.syncBackgroundVisual();
+    }
+    async syncBackgroundVisual() {
+        const sequence = ++this.backgroundSyncSequence;
+        try {
+            const feature = await import('../features/backgrounds.js');
+            if (sequence !== this.backgroundSyncSequence)
+                return;
+            await feature.applyBackground(this.engine.state.background);
+        }
+        catch {
+            if (sequence === this.backgroundSyncSequence)
+                this.showToast({ text: 'No se pudo aplicar el fondo local.', tone: 'warning' });
+        }
+    }
+    async handleBackgroundAction(event) {
+        const target = event.target;
+        if (!(target instanceof Element))
+            return;
+        const button = target.closest('[data-background-action], [data-background-preset], [data-ui-palette]');
+        if (!button)
+            return;
+        const palette = button.dataset.uiPalette;
+        if (palette) {
+            this.engine.updateBackground({ palette });
+            saveState(this.engine.state);
+            this.showToast({ text: `Paleta ${palette === 'arcade' ? 'Arcade' : palette === 'matrix' ? 'Matrix' : palette === 'violet' ? 'Violeta' : palette === 'sunset' ? 'Sunset' : palette === 'ice' ? 'Ice' : 'Ámbar'} aplicada.`, tone: 'info' });
+            return;
+        }
+        const preset = button.dataset.backgroundPreset;
+        if (preset) {
+            if (this.engine.state.manualClicks < 1000)
+                return;
+            this.engine.updateBackground({ mode: 'preset', preset, videoPaused: true });
+            saveState(this.engine.state);
+            this.showToast({ text: 'Fondo prediseñado aplicado.', tone: 'success' });
+            return;
+        }
+        const action = button.dataset.backgroundAction;
+        if (action === 'upload-image') {
+            if (this.engine.state.manualClicks >= 1000)
+                this.backgroundImageInput.click();
+            return;
+        }
+        if (action === 'upload-video') {
+            if (this.engine.state.manualClicks >= 5000)
+                this.backgroundVideoInput.click();
+            return;
+        }
+        if (action === 'toggle-video') {
+            if (this.engine.state.background.mode !== 'customVideo')
+                return;
+            this.engine.updateBackground({ videoPaused: !this.engine.state.background.videoPaused });
+            saveState(this.engine.state);
+            return;
+        }
+        if (action === 'remove') {
+            this.engine.updateBackground({ mode: 'default', videoPaused: true });
+            saveState(this.engine.state);
+            this.showToast({ text: 'Fondo personalizado desactivado.', tone: 'info' });
+        }
+    }
+    async handleBackgroundFile(kind) {
+        const input = kind === 'image' ? this.backgroundImageInput : this.backgroundVideoInput;
+        const file = input.files?.[0];
+        input.value = '';
+        if (!file)
+            return;
+        const requiredClicks = kind === 'image' ? 1000 : 5000;
+        if (this.engine.state.manualClicks < requiredClicks)
+            return;
+        try {
+            const feature = await import('../features/backgrounds.js');
+            await feature.saveBackgroundFile(kind, file);
+            const compact = window.matchMedia?.('(max-width: 767px)').matches ?? false;
+            this.engine.updateBackground({
+                mode: kind === 'image' ? 'customImage' : 'customVideo',
+                videoPaused: kind === 'video' ? compact : true
+            });
+            saveState(this.engine.state);
+            this.showToast({ text: kind === 'image' ? 'Imagen de fondo guardada localmente.' : 'Video de fondo guardado localmente.', tone: 'success' });
+        }
+        catch (error) {
+            this.showToast({ text: error instanceof Error ? error.message : 'No se pudo guardar el fondo.', tone: 'danger' });
+        }
+    }
     updateClock() {
-        this.currentTime.textContent = new Intl.DateTimeFormat('es-PE', {
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-        }).format(new Date());
+        this.currentTime.textContent = new Intl.DateTimeFormat('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(new Date());
     }
     openPanel(name) {
         const panel = document.getElementById(`panel-${name}`);
         if (!panel)
             return;
-        if (this.modalBackdrop.hidden)
-            this.lastFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-        this.restoreMountedPanel();
+        this.prepareModal();
         this.modalContent.innerHTML = '';
         this.mountedPanel = panel;
         this.modalContent.appendChild(panel);
-        this.modal.classList.toggle('modal-wide', name === 'store' || name === 'stats' || name === 'achievements');
-        this.modalBackdrop.hidden = false;
-        document.body.style.overflow = 'hidden';
-        requestAnimationFrame(() => this.modal.querySelector('button, input, [tabindex="0"]')?.focus());
+        this.modal.classList.toggle('modal-wide', name === 'store' || name === 'stats' || name === 'achievements' || name === 'prestige');
+        this.showModal();
     }
     restoreMountedPanel() {
         if (!this.mountedPanel)
@@ -355,89 +610,137 @@ export class GameUI {
         this.mountedPanel = null;
     }
     openModal(markup, wide = false) {
-        if (this.modalBackdrop.hidden)
-            this.lastFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-        this.restoreMountedPanel();
+        this.prepareModal();
         this.modalContent.innerHTML = markup;
         this.modal.classList.toggle('modal-wide', wide);
+        this.showModal();
+    }
+    prepareModal() {
+        if (this.modalBackdrop.hidden)
+            this.lastFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        this.cleanupFeature();
+        this.restoreMountedPanel();
+    }
+    showModal() {
         this.modalBackdrop.hidden = false;
         document.body.style.overflow = 'hidden';
         requestAnimationFrame(() => this.modal.querySelector('button, input, [tabindex="0"]')?.focus());
     }
     closeModal() {
+        this.cleanupFeature();
         this.restoreMountedPanel();
         this.modalBackdrop.hidden = true;
         document.body.style.overflow = '';
         this.modalContent.innerHTML = '';
         this.lastFocused?.focus();
     }
+    cleanupFeature() {
+        this.featureCleanup?.();
+        this.featureCleanup = null;
+    }
     openHelp() {
         this.openModal(`<span class="eyebrow">GUÍA RÁPIDA</span>
       <h2 id="modal-title">Cómo jugar CLICK!</h2>
-      <p>El progreso se guarda en este navegador. También puedes exportar una copia JSON e importarla después.</p>
+      <p>El progreso se guarda en este navegador. Image Lab también funciona de forma local y no solicita cuentas ni datos de servicios externos.</p>
       <ul class="help-list">
-        <li><span>🖱️</span><div><strong>Genera monedas</strong><small>Pulsa el botón central o la barra espaciadora. Los clics críticos valen cinco veces más.</small></div></li>
-        <li><span>🛒</span><div><strong>Compra mejoras</strong><small>Aumenta el valor de cada clic, el CPS y la probabilidad crítica.</small></div></li>
-        <li><span>📋</span><div><strong>Completa misiones</strong><small>Las tres tareas cambian cada día y entregan recompensas adicionales.</small></div></li>
-        <li><span>🌟</span><div><strong>Usa el prestigio</strong><small>Reinicia la producción base para obtener una bonificación permanente.</small></div></li>
-        <li><span>🔥</span><div><strong>Mantén el combo</strong><small>Haz clic rápidamente para aumentar temporalmente el valor de cada golpe.</small></div></li>
+        <li><span>🖱️</span><div><strong>Genera monedas</strong><small>Pulsa el botón central o la barra espaciadora. Los críticos valen cinco veces más.</small></div></li>
+        <li><span>🛒</span><div><strong>Compra mejoras</strong><small>Aumenta el valor de cada clic y automatiza la producción.</small></div></li>
+        <li><span>📋</span><div><strong>Completa misiones</strong><small>Tres tareas diarias entregan recompensas sin competir con los eventos.</small></div></li>
+        <li><span>🌟</span><div><strong>Reinicia para crecer</strong><small>El prestigio normal y el núcleo profundo ofrecen bonificaciones permanentes.</small></div></li>
+        <li><span>🕹️</span><div><strong>Juega en el arcade</strong><small>Neon Rush aparece al conseguir tu primer nivel de núcleo.</small></div></li>
       </ul>
-      <div class="modal-actions">
-        <button class="secondary-button" type="button" data-modal-action="open-image-lab"><span>🖼️</span> Image Lab local</button>
-        <button class="primary-button" type="button" data-modal-action="close"><span>Entendido</span></button>
-      </div>`);
+      <div class="modal-actions"><button class="primary-button" type="button" data-modal-action="close"><span>Entendido</span></button></div>`);
     }
-    openAchievements() {
-        const cards = ACHIEVEMENTS.map((achievement) => this.achievementMarkup(achievement, this.engine.state.unlockedAchievements.includes(achievement.id))).join('');
+    openAchievements(filter = 'all') {
+        const filtered = ACHIEVEMENTS.filter((achievement) => this.achievementMatchesFilter(achievement, filter));
+        const cards = filtered.map((achievement) => this.achievementMarkup(achievement, this.engine.state.unlockedAchievements.includes(achievement.id))).join('');
+        const tabs = [
+            ['all', 'Todos'], ['clicks', 'Clics'], ['production', 'Producción'], ['prestige', 'Reinicios'], ['arcade', 'Arcade'], ['daily', 'Diarios'], ['other', 'Otros']
+        ];
         this.openModal(`<span class="eyebrow">COLECCIÓN COMPLETA</span>
-      <h2 id="modal-title">100 logros</h2>
+      <h2 id="modal-title">${ACHIEVEMENTS.length} logros</h2>
       <p>Desbloqueados: ${this.engine.state.unlockedAchievements.length} de ${ACHIEVEMENTS.length}.</p>
+      <div class="achievement-tabs" role="tablist" aria-label="Categorías de logros">${tabs.map(([id, label]) => `<button type="button" role="tab" aria-selected="${id === filter}" class="achievement-tab${id === filter ? ' is-active' : ''}" data-modal-action="achievement-filter-${id}">${label}</button>`).join('')}</div>
       <div class="achievement-modal-grid">${cards}</div>`, true);
     }
-    openRoulette() {
-        this.openModal(`<span class="eyebrow">MINIJUEGO · 100 🪙</span>
-      <h2 id="modal-title">Ruleta</h2>
-      <p>Rojo y negro pagan x2. Verde paga x14.</p>
-      <div class="modal-options">
-        <button class="modal-option" type="button" data-modal-action="roulette-red"><span>🔴</span><strong>Rojo</strong><small>Números impares</small></button>
-        <button class="modal-option" type="button" data-modal-action="roulette-black"><span>⚫</span><strong>Negro</strong><small>Números pares</small></button>
-        <button class="modal-option" type="button" data-modal-action="roulette-green"><span>🟢</span><strong>Verde</strong><small>Solo el cero</small></button>
-      </div>`);
-    }
-    openSlots() {
-        this.openModal(`<span class="eyebrow">MINIJUEGO · 75 🪙</span>
-      <h2 id="modal-title">Tragamonedas</h2>
-      <p>Dos símbolos pagan x2. Tres iguales pagan x8 y tres sietes pagan x25.</p>
-      <div class="modal-result"><span class="result-emoji">❔ ❔ ❔</span><strong>Listo para girar</strong></div>
-      <div class="modal-actions"><button class="primary-button" type="button" data-modal-action="slots-spin"><span>Girar</span></button></div>`);
-    }
-    openGuess() {
-        this.openModal(`<span class="eyebrow">MINIJUEGO · 50 🪙</span>
-      <h2 id="modal-title">Adivina el número</h2>
-      <p>Elige un número del 1 al 10. Un acierto paga x6.</p>
-      <input class="guess-input" id="guess-input" type="number" min="1" max="10" inputmode="numeric" value="5" aria-label="Número elegido">
-      <div class="modal-actions"><button class="primary-button" type="button" data-modal-action="guess-play"><span>Jugar</span></button></div>`);
+    achievementMatchesFilter(achievement, filter) {
+        if (filter === 'all')
+            return true;
+        if (filter === 'clicks')
+            return achievement.category === 'clicks';
+        if (filter === 'production')
+            return ['cps', 'autoClickers', 'multiplier'].includes(achievement.category);
+        if (filter === 'prestige')
+            return achievement.category === 'prestige' || achievement.category === 'deepPrestige';
+        if (filter === 'arcade')
+            return achievement.category === 'minigames';
+        if (filter === 'daily')
+            return ['missions', 'events', 'seasons'].includes(achievement.category);
+        return ['time', 'shop', 'secret'].includes(achievement.category);
     }
     openResetConfirmation() {
-        this.openModal(`<span class="eyebrow">ACCIÓN IRREVERSIBLE</span>
-      <h2 id="modal-title">Reiniciar partida</h2>
-      <p>Se eliminarán monedas, mejoras, prestigio, estadísticas y logros guardados en este navegador.</p>
-      <div class="modal-actions">
-        <button class="secondary-button" type="button" data-modal-action="close">Cancelar</button>
-        <button class="danger-button" type="button" data-modal-action="confirm-reset">Reiniciar todo</button>
-      </div>`);
+        this.openModal(`<span class="eyebrow">ZONA DE RIESGO</span><h2 id="modal-title">Reiniciar partida</h2>
+      <p>Esto borrará el progreso guardado en este navegador. Exporta una copia antes si quieres conservarla.</p>
+      <div class="modal-actions"><button class="secondary-button" type="button" data-modal-action="close">Cancelar</button><button class="danger-button" type="button" data-modal-action="confirm-reset">Reiniciar</button></div>`);
     }
     openPrestigeConfirmation() {
         const gain = this.engine.prestigeGain;
         if (gain < 1)
             return;
-        this.openModal(`<span class="eyebrow">ASCENSIÓN</span>
-      <h2 id="modal-title">Confirmar prestigio</h2>
-      <p>Recibirás <strong>${gain} puntos de prestigio</strong>. Tus monedas y mejoras volverán a cero, pero conservarás logros y estadísticas.</p>
-      <div class="modal-actions">
-        <button class="secondary-button" type="button" data-modal-action="close">Cancelar</button>
-        <button class="primary-button" type="button" data-modal-action="confirm-prestige"><span>Prestigiar ahora</span></button>
-      </div>`);
+        this.openModal(`<span class="eyebrow">ASCENSIÓN</span><h2 id="modal-title">Confirmar prestigio</h2>
+      <p>Recibirás <strong>${gain} puntos de prestigio</strong>. Tus monedas y mejoras volverán a cero, pero conservarás logros, estadísticas y progreso profundo.</p>
+      <div class="modal-actions"><button class="secondary-button" type="button" data-modal-action="close">Cancelar</button><button class="primary-button" type="button" data-modal-action="confirm-prestige"><span>Prestigiar ahora</span></button></div>`);
+    }
+    openDeepPrestigeConfirmation() {
+        const gain = this.engine.deepPrestigeGain;
+        if (gain < 1)
+            return;
+        this.openModal(`<span class="eyebrow">NÚCLEO PROFUNDO</span><h2 id="modal-title">Reiniciar el núcleo</h2>
+      <p>Recibirás <strong>${gain} fragment${gain === 1 ? 'o' : 'os'} 💠</strong>. Se reiniciarán prestigio normal, monedas y mejoras base. Conservarás fragmentos, mejoras profundas, logros y estadísticas.</p>
+      <div class="modal-actions"><button class="secondary-button" type="button" data-modal-action="close">Cancelar</button><button class="primary-button" type="button" data-modal-action="confirm-deep-prestige"><span>Reiniciar núcleo</span></button></div>`);
+    }
+    openRoulette() {
+        this.openModal(`<span class="eyebrow">MINIJUEGO</span><h2 id="modal-title">🎡 Ruleta neón</h2><p>Cuesta 100 monedas. Elige un color.</p>
+      <div class="modal-actions minigame-actions"><button class="secondary-button" type="button" data-modal-action="roulette-red">🔴 Rojo</button><button class="secondary-button" type="button" data-modal-action="roulette-black">⚫ Negro</button><button class="secondary-button" type="button" data-modal-action="roulette-green">🟢 Verde</button></div>`);
+    }
+    openSlots() {
+        this.openModal(`<span class="eyebrow">MINIJUEGO</span><h2 id="modal-title">🎰 Pixel slots</h2><p>Cuesta 75 monedas. Tres símbolos iguales dan el mejor premio.</p>
+      <div class="modal-actions"><button class="secondary-button" type="button" data-modal-action="close">Cancelar</button><button class="primary-button" type="button" data-modal-action="slots-spin">Girar</button></div>`);
+    }
+    openGuess() {
+        this.openModal(`<span class="eyebrow">MINIJUEGO</span><h2 id="modal-title">🔢 Código secreto</h2><p>Cuesta 50 monedas. Elige un número del 1 al 10.</p>
+      <label class="field-label" for="guess-input">Tu número</label><input class="game-input" id="guess-input" type="number" min="1" max="10" value="5" inputmode="numeric">
+      <div class="modal-actions"><button class="secondary-button" type="button" data-modal-action="close">Cancelar</button><button class="primary-button" type="button" data-modal-action="guess-play">Jugar</button></div>`);
+    }
+    async openImageLab() {
+        this.openModal(`<span class="eyebrow">CARGANDO MÓDULO LOCAL</span><h2 id="modal-title">Image Lab</h2><p>Preparando la herramienta...</p>`, true);
+        try {
+            const feature = await import('../features/image-lab.js');
+            this.openModal(feature.imageLabMarkup(), true);
+            this.featureCleanup = feature.mountImageLab(this.modalContent);
+        }
+        catch {
+            this.openModal(`<span class="eyebrow">IMAGE LAB</span><h2 id="modal-title">No disponible</h2><p>No se pudo cargar el módulo local. Recarga la página e inténtalo de nuevo.</p><div class="modal-actions"><button class="primary-button" type="button" data-modal-action="close">Cerrar</button></div>`);
+        }
+    }
+    async openNeonRush() {
+        if (this.engine.state.deepPrestige.level < 1) {
+            this.showToast({ text: '💠 Neon Rush se desbloquea con el primer reinicio de núcleo.', tone: 'warning' });
+            return;
+        }
+        this.openModal(`<span class="eyebrow">CARGANDO BONUS STAGE</span><h2 id="modal-title">Neon Rush</h2><p>Preparando la arena...</p>`, true);
+        try {
+            const feature = await import('../features/neon-rush.js');
+            this.openModal(feature.neonRushMarkup(), true);
+            this.featureCleanup = feature.mountNeonRush(this.modalContent, (score) => {
+                const reward = this.engine.completeNeonRush(score);
+                this.showMinigameResult(`✦ ${score} puntos`, `Premio: ${this.engine.format(reward)} monedas`);
+            });
+        }
+        catch {
+            this.showToast({ text: 'No se pudo cargar Neon Rush.', tone: 'danger' });
+            this.closeModal();
+        }
     }
     async handleModalAction(event) {
         const target = event.target;
@@ -449,12 +752,8 @@ export class GameUI {
             return;
         if (action === 'close')
             this.closeModal();
-        if (action === 'open-image-lab')
-            this.openImageLab();
-        if (action.startsWith('image-format-'))
-            this.selectImageFormat(action.replace('image-format-', ''));
-        if (action === 'convert-image')
-            await this.convertImage();
+        if (action.startsWith('achievement-filter-'))
+            this.openAchievements(action.replace('achievement-filter-', ''));
         if (action === 'confirm-reset') {
             clearState();
             this.engine.reset();
@@ -464,6 +763,10 @@ export class GameUI {
         }
         if (action === 'confirm-prestige') {
             this.engine.prestige();
+            this.closeModal();
+        }
+        if (action === 'confirm-deep-prestige') {
+            this.engine.deepPrestige();
             this.closeModal();
         }
         if (action.startsWith('roulette-')) {
@@ -481,162 +784,23 @@ export class GameUI {
             this.showMinigameResult(result.symbols.join(' '), result.reward > 0 ? `Ganaste ${this.engine.format(result.reward)} monedas` : 'No hubo premio');
         }
         if (action === 'guess-play') {
-            const input = byId('guess-input');
-            const result = this.engine.playGuess(Number(input.value));
+            const input = this.modalContent.querySelector('#guess-input');
+            const result = this.engine.playGuess(Number(input?.value));
             if (!result)
                 return;
             this.showMinigameResult(`🔢 ${result.answer}`, result.reward > 0 ? `Acertaste: +${this.engine.format(result.reward)} monedas` : 'No acertaste esta vez');
         }
     }
-    openImageLab() {
-        this.imageLabFile = null;
-        this.imageLabFormat = 'image/png';
-        if (this.imagePreviewUrl)
-            URL.revokeObjectURL(this.imagePreviewUrl);
-        this.imagePreviewUrl = '';
-        this.openModal(`<span class="eyebrow">SECRET TOOL · LOCAL</span>
-      <h2 id="modal-title">Image Lab</h2>
-      <p>Convierte imágenes en PNG, JPG o WebP directamente en el navegador. Ningún archivo se envía a un servidor.</p>
-      <div class="image-lab">
-        <label class="image-drop" for="image-source">
-          <input id="image-source" type="file" accept="image/*" hidden>
-          <span>🖼️</span>
-          <strong>Seleccionar imagen</strong>
-          <small>PNG, JPG, WebP, GIF, BMP, SVG y formatos admitidos por el navegador</small>
-        </label>
-        <div class="image-preview-shell" id="image-preview-shell" hidden>
-          <img id="image-preview" alt="Vista previa de la imagen seleccionada">
-          <div><strong id="image-file-name">Sin archivo</strong><small id="image-file-data">0 × 0</small></div>
-        </div>
-        <div class="format-selector" role="group" aria-label="Formato de salida">
-          <button class="format-button is-active" type="button" data-modal-action="image-format-png">PNG</button>
-          <button class="format-button" type="button" data-modal-action="image-format-jpeg">JPG</button>
-          <button class="format-button" type="button" data-modal-action="image-format-webp">WEBP</button>
-        </div>
-        <label class="quality-control" for="image-quality"><span>Calidad JPG/WebP</span><output id="image-quality-value">92%</output><input id="image-quality" type="range" min="50" max="100" value="92"></label>
-        <p class="verification-status" id="image-lab-status" aria-live="polite">Selecciona una imagen para comenzar.</p>
-      </div>
-      <div class="modal-actions">
-        <button class="secondary-button" type="button" data-modal-action="close">Cerrar</button>
-        <button class="primary-button" type="button" data-modal-action="convert-image" disabled><span>Convertir y descargar</span></button>
-      </div>`, true);
-        const quality = document.getElementById('image-quality');
-        quality?.addEventListener('input', () => {
-            const value = quality instanceof HTMLInputElement ? quality.value : '92';
-            const output = document.getElementById('image-quality-value');
-            if (output)
-                output.textContent = `${value}%`;
-        });
-    }
-    async handleModalChange(event) {
-        const target = event.target;
-        if (!(target instanceof HTMLInputElement) || target.id !== 'image-source')
-            return;
-        const file = target.files?.[0];
-        if (!file)
-            return;
-        if (!file.type.startsWith('image/')) {
-            this.setImageLabStatus('El archivo seleccionado no es una imagen válida.', 'danger');
-            return;
-        }
-        this.imageLabFile = file;
-        if (this.imagePreviewUrl)
-            URL.revokeObjectURL(this.imagePreviewUrl);
-        this.imagePreviewUrl = URL.createObjectURL(file);
-        const preview = document.getElementById('image-preview');
-        const shell = document.getElementById('image-preview-shell');
-        if (!(preview instanceof HTMLImageElement) || !shell)
-            return;
-        preview.src = this.imagePreviewUrl;
-        try {
-            await preview.decode();
-            shell.hidden = false;
-            const name = document.getElementById('image-file-name');
-            const data = document.getElementById('image-file-data');
-            if (name)
-                name.textContent = file.name;
-            if (data)
-                data.textContent = `${preview.naturalWidth} × ${preview.naturalHeight} · ${this.formatFileSize(file.size)}`;
-            const convert = this.modalContent.querySelector('[data-modal-action="convert-image"]');
-            if (convert)
-                convert.disabled = false;
-            this.setImageLabStatus('Imagen lista para convertir.', 'success');
-        }
-        catch {
-            this.imageLabFile = null;
-            this.setImageLabStatus('El navegador no pudo leer esta imagen.', 'danger');
-        }
-    }
-    selectImageFormat(format) {
-        this.imageLabFormat = `image/${format}`;
-        this.modalContent.querySelectorAll('.format-button').forEach((button) => {
-            button.classList.toggle('is-active', button.dataset.modalAction === `image-format-${format}`);
-        });
-    }
-    async convertImage() {
-        const file = this.imageLabFile;
-        if (!file) {
-            this.setImageLabStatus('Selecciona una imagen antes de convertir.', 'warning');
-            return;
-        }
-        const convert = this.modalContent.querySelector('[data-modal-action="convert-image"]');
-        if (convert)
-            convert.disabled = true;
-        this.setImageLabStatus('Procesando la imagen localmente...', 'info');
-        try {
-            const bitmap = await createImageBitmap(file);
-            const canvas = document.createElement('canvas');
-            canvas.width = bitmap.width;
-            canvas.height = bitmap.height;
-            const context = canvas.getContext('2d');
-            if (!context)
-                throw new Error('canvas');
-            if (this.imageLabFormat === 'image/jpeg') {
-                context.fillStyle = '#ffffff';
-                context.fillRect(0, 0, canvas.width, canvas.height);
-            }
-            context.drawImage(bitmap, 0, 0);
-            bitmap.close();
-            const qualityInput = document.getElementById('image-quality');
-            const quality = qualityInput instanceof HTMLInputElement ? Number(qualityInput.value) / 100 : 0.92;
-            const blob = await new Promise((resolve, reject) => {
-                canvas.toBlob((result) => result ? resolve(result) : reject(new Error('blob')), this.imageLabFormat, quality);
-            });
-            const extension = this.imageLabFormat === 'image/jpeg' ? 'jpg' : this.imageLabFormat.split('/')[1] || 'png';
-            const baseName = file.name.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_-]+/g, '-') || 'imagen';
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `${baseName}.${extension}`;
-            link.click();
-            URL.revokeObjectURL(link.href);
-            this.setImageLabStatus(`Conversión completada: ${extension.toUpperCase()} · ${this.formatFileSize(blob.size)}.`, 'success');
-        }
-        catch {
-            this.setImageLabStatus('No fue posible convertir esta imagen en el navegador.', 'danger');
-        }
-        finally {
-            if (convert)
-                convert.disabled = false;
-        }
-    }
-    setImageLabStatus(text, tone) {
-        const status = document.getElementById('image-lab-status');
-        if (!status)
-            return;
-        status.textContent = text;
-        status.dataset.tone = tone;
-    }
-    formatFileSize(bytes) {
-        if (bytes < 1024)
-            return `${bytes} B`;
-        if (bytes < 1024 * 1024)
-            return `${(bytes / 1024).toFixed(1)} KB`;
-        return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-    }
     showMinigameResult(symbol, message) {
-        this.modalContent.innerHTML = `<span class="eyebrow">RESULTADO</span>
-      <h2 id="modal-title">Partida finalizada</h2>
+        this.openModal(`<span class="eyebrow">RESULTADO</span><h2 id="modal-title">Partida finalizada</h2>
       <div class="modal-result"><span class="result-emoji">${symbol}</span><strong>${escapeHtml(message)}</strong></div>
-      <div class="modal-actions"><button class="primary-button" type="button" data-modal-action="close"><span>Continuar</span></button></div>`;
+      <div class="modal-actions"><button class="primary-button" type="button" data-modal-action="close"><span>Continuar</span></button></div>`);
+    }
+    flashBody(className) {
+        document.body.classList.remove(className);
+        requestAnimationFrame(() => {
+            document.body.classList.add(className);
+            window.setTimeout(() => document.body.classList.remove(className), 650);
+        });
     }
 }

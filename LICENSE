@@ -1,21 +1,6 @@
-MIT License
 
-Copyright (c) 2024 pitxgoras (Jhonn_Pether)
+Este formato mejora bastante la primera impresión del repositorio: arriba solo aparecen el nombre, tres badges visuales y el botón para jugar; después se explica el juego con lenguaje común y tarjetas simples. Los términos como TypeScript, `npm`, build y GitHub Actions quedan relegados a **Para desarrolladores**.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+También elimina completamente cualquier referencia a dar estrella, verificar GitHub o desbloquear contenido mediante servicios externos.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Un ajuste que haría después es añadir una captura real del juego justo debajo de los badges, cuando terminemos de revisar visualmente la v2.5.1 local. Eso hará que el README se vea bastante más profesional para alguien que entra por primera vez.

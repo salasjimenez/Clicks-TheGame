@@ -2,3 +2,9 @@ node_modules/
 .DS_Store
 *.log
 .vscode/
+
+# Instaladores/payloads locales de mantenimiento
+/apply-clicks-*.mjs
+/.click-ui-payload/
+/.v251-payload/
+/INSTRUCCIONES-*.txt
