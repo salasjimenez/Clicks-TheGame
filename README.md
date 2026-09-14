@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <a href="https://sjhonn.github.io/Clicks-TheGame/">
+  <a href="https://salasjimenez.github.io/Clicks-TheGame/">
     <strong>▶ JUGAR CLICK! AHORA</strong>
   </a>
 </p>
@@ -155,7 +155,7 @@ El juego:
 
 La versión pública está disponible aquí:
 
-### [▶ https://sjhonn.github.io/Clicks-TheGame/](https://sjhonn.github.io/Clicks-TheGame/)
+### [▶ https://salasjimenez.github.io/Clicks-TheGame/](https://salasjimenez.github.io/Clicks-TheGame/)
 
 Abre el enlace y empieza a jugar.
 
