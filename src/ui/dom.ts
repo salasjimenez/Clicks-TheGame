@@ -7,11 +7,11 @@ export function byId<T extends HTMLElement>(id: string): T {
 export function escapeHtml(value: string): string {
   return value.replace(/[&<>'"]/g, (character) => {
     const entities: Record<string, string> = {
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      "'": '&#039;',
-      '"': '&quot;'
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      "'": "&#039;",
+      '"': "&quot;",
     };
     return entities[character] ?? character;
   });

@@ -1,6 +1,5 @@
-
 Este formato mejora bastante la primera impresión del repositorio: arriba solo aparecen el nombre, tres badges visuales y el botón para jugar; después se explica el juego con lenguaje común y tarjetas simples. Los términos como TypeScript, `npm`, build y GitHub Actions quedan relegados a **Para desarrolladores**.
 
 También elimina completamente cualquier referencia a dar estrella, verificar GitHub o desbloquear contenido mediante servicios externos.
 
-Un ajuste que haría después es añadir una captura real del juego justo debajo de los badges, cuando terminemos de revisar visualmente la v2.5.1 local. Eso hará que el README se vea bastante más profesional para alguien que entra por primera vez.
+Un ajuste que haría después es añadir una captura real del juego justo debajo de los badges, cuando terminemos de revisar visualmente la v2.9 local. Eso hará que el README se vea bastante más profesional para alguien que entra por primera vez.

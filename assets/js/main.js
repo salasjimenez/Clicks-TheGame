@@ -1,10 +1,14 @@
 import { GameEngine } from './game/engine.js';
 import { loadState, saveState } from './game/storage.js';
 import { GameUI } from './ui/render.js';
+import { V29Features, installV29Derived } from './features/v29.js';
+import { capOfflineSeconds, prepareOfflineState } from './features/v29-state.js';
 const TICK_MS = 250;
 const SAVE_MS = 30000;
-const engine = new GameEngine(loadState());
+const engine = new GameEngine(prepareOfflineState(loadState()));
+installV29Derived(engine);
 new GameUI(engine);
+new V29Features(engine);
 document.documentElement.dataset.appReady = 'true';
 let tickTimer = 0;
 let saveTimer = 0;
@@ -54,7 +58,7 @@ document.addEventListener('visibilitychange', () => {
         return;
     }
     if (hiddenAt > 0) {
-        engine.resumeFromBackground((Date.now() - hiddenAt) / 1000);
+        engine.resumeFromBackground(capOfflineSeconds((Date.now() - hiddenAt) / 1000));
         hiddenAt = 0;
     }
     startTickLoop();

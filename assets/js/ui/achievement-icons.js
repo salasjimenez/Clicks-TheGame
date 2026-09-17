@@ -1,29 +1,29 @@
 const ICONS = {
-    speed: './assets/icons/achievements/speed.svg',
-    wealth: './assets/icons/achievements/wealth.svg',
-    explore: './assets/icons/achievements/explore.svg',
-    prestige: './assets/icons/achievements/prestige.svg',
-    special: './assets/icons/achievements/special.svg',
-    locked: './assets/icons/achievements/locked.svg'
+    speed: "./assets/icons/achievements/speed.svg",
+    wealth: "./assets/icons/achievements/wealth.svg",
+    explore: "./assets/icons/achievements/explore.svg",
+    prestige: "./assets/icons/achievements/prestige.svg",
+    special: "./assets/icons/achievements/special.svg",
+    locked: "./assets/icons/achievements/locked.svg",
 };
 const CATEGORY_ICON = {
-    clicks: 'speed',
-    cps: 'speed',
-    autoClickers: 'speed',
-    multiplier: 'wealth',
-    prestige: 'prestige',
-    deepPrestige: 'prestige',
-    minigames: 'explore',
-    missions: 'explore',
-    events: 'explore',
-    seasons: 'explore',
-    time: 'explore',
-    shop: 'wealth',
-    secret: 'special'
+    clicks: "speed",
+    cps: "speed",
+    autoClickers: "speed",
+    multiplier: "wealth",
+    prestige: "prestige",
+    deepPrestige: "prestige",
+    minigames: "explore",
+    missions: "explore",
+    events: "explore",
+    seasons: "explore",
+    time: "explore",
+    shop: "wealth",
+    secret: "special",
 };
 export function achievementIconUrl(category, locked = false) {
     return locked ? ICONS.locked : ICONS[CATEGORY_ICON[category]];
 }
-export function achievementIconMarkup(category, locked = false, className = 'achievement-icon') {
+export function achievementIconMarkup(category, locked = false, className = "achievement-icon") {
     return `<img class="${className}" src="${achievementIconUrl(category, locked)}" alt="" aria-hidden="true" loading="lazy" decoding="async">`;
 }

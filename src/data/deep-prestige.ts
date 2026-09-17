@@ -1,58 +1,58 @@
-import type { DeepUpgradeDefinition } from '../types.js';
+import type { DeepUpgradeDefinition } from "../types.js";
 
 export const DEEP_UPGRADES: DeepUpgradeDefinition[] = [
   {
-    id: 'coreEcho',
-    name: 'Eco del núcleo',
-    description: '+10% a toda la producción por nivel',
-    emoji: '🌀',
+    id: "coreEcho",
+    name: "Eco del núcleo",
+    description: "+10% a toda la producción por nivel",
+    emoji: "🌀",
     basePrice: 2,
     growth: 1.7,
-    maxLevel: 10
+    maxLevel: 10,
   },
   {
-    id: 'timeDilation',
-    name: 'Dilatación temporal',
-    description: '+3% de eficiencia offline por nivel',
-    emoji: '⏳',
+    id: "timeDilation",
+    name: "Dilatación temporal",
+    description: "+3% de eficiencia offline por nivel",
+    emoji: "⏳",
     basePrice: 2,
     growth: 1.75,
-    maxLevel: 10
+    maxLevel: 10,
   },
   {
-    id: 'arcadeProtocol',
-    name: 'Protocolo arcade',
-    description: '+12% a premios de minijuegos por nivel',
-    emoji: '🕹️',
+    id: "arcadeProtocol",
+    name: "Protocolo arcade",
+    description: "+12% a premios de minijuegos por nivel",
+    emoji: "🕹️",
     basePrice: 3,
     growth: 1.8,
-    maxLevel: 8
+    maxLevel: 8,
   },
   {
-    id: 'missionCompiler',
-    name: 'Compilador de misiones',
-    description: '+5% a recompensas de misiones por nivel',
-    emoji: '📋',
+    id: "missionCompiler",
+    name: "Compilador de misiones",
+    description: "+5% a recompensas de misiones por nivel",
+    emoji: "📋",
     basePrice: 3,
     growth: 1.7,
-    maxLevel: 10
+    maxLevel: 10,
   },
   {
-    id: 'seasonAntenna',
-    name: 'Antena de temporada',
-    description: '+5% a la duración de eventos por nivel',
-    emoji: '📡',
+    id: "seasonAntenna",
+    name: "Antena de temporada",
+    description: "+5% a la duración de eventos por nivel",
+    emoji: "📡",
     basePrice: 2,
     growth: 1.65,
-    maxLevel: 8
+    maxLevel: 8,
   },
   {
-    id: 'criticalMatrix',
-    name: 'Matriz crítica',
-    description: '+1% de probabilidad crítica por nivel',
-    emoji: '💠',
+    id: "criticalMatrix",
+    name: "Matriz crítica",
+    description: "+1% de probabilidad crítica por nivel",
+    emoji: "💠",
     basePrice: 4,
     growth: 1.85,
-    maxLevel: 10
-  }
+    maxLevel: 10,
+  },
 ];

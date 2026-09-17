@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Versión-v2.5.1-7c3aed" alt="Versión v2.5.1">
+  <img src="https://img.shields.io/badge/Versión-v2.9-7c3aed" alt="Versión v2.9">
   <img src="https://img.shields.io/badge/Licencia-MIT-22c55e" alt="Licencia MIT">
   <img src="https://img.shields.io/badge/Estado-Online-06b6d4" alt="Estado Online">
 </p>
@@ -163,7 +163,7 @@ Abre el enlace y empieza a jugar.
 
 ## Versión actual
 
-**CLICK! v2.5.1**
+**CLICK! v2.9**
 
 Esta versión incluye, entre otras mejoras:
 

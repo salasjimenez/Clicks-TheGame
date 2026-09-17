@@ -7,11 +7,11 @@ export function byId(id) {
 export function escapeHtml(value) {
     return value.replace(/[&<>'"]/g, (character) => {
         const entities = {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            "'": '&#039;',
-            '"': '&quot;'
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            "'": "&#039;",
+            '"': "&quot;",
         };
         return entities[character] ?? character;
     });

@@ -1,6 +1,14 @@
-export function spawnClickParticle(x: number, y: number, text: string, critical: boolean): void {
-  const particle = document.createElement('span');
-  particle.className = `click-particle${critical ? ' is-critical' : ''}`;
+import { particlesAllowed } from '../features/v29-state.js';
+
+export function spawnClickParticle(
+  x: number,
+  y: number,
+  text: string,
+  critical: boolean,
+): void {
+    if (!particlesAllowed()) return;
+const particle = document.createElement("span");
+  particle.className = `click-particle${critical ? " is-critical" : ""}`;
   particle.textContent = critical ? `CRÍTICO ${text}` : text;
   particle.style.left = `${x}px`;
   particle.style.top = `${y}px`;

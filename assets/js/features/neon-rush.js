@@ -13,10 +13,10 @@ export function neonRushMarkup() {
     <div class="modal-actions"><button class="secondary-button" type="button" data-modal-action="close">Salir</button></div>`;
 }
 export function mountNeonRush(root, onFinish) {
-    const field = root.querySelector('#neon-rush-field');
-    const target = root.querySelector('#neon-rush-target');
-    const scoreElement = root.querySelector('#neon-rush-score');
-    const timeElement = root.querySelector('#neon-rush-time');
+    const field = root.querySelector("#neon-rush-field");
+    const target = root.querySelector("#neon-rush-target");
+    const scoreElement = root.querySelector("#neon-rush-score");
+    const timeElement = root.querySelector("#neon-rush-time");
     const startedAt = performance.now();
     const endsAt = startedAt + GAME_SECONDS * 1000;
     let score = 0;
@@ -57,16 +57,16 @@ export function mountNeonRush(root, onFinish) {
         score += 1;
         if (scoreElement)
             scoreElement.textContent = String(score);
-        target?.classList.remove('is-hit');
-        requestAnimationFrame(() => target?.classList.add('is-hit'));
+        target?.classList.remove("is-hit");
+        requestAnimationFrame(() => target?.classList.add("is-hit"));
         moveTarget();
     };
-    target?.addEventListener('click', onHit);
+    target?.addEventListener("click", onHit);
     requestAnimationFrame(moveTarget);
     updateTimer();
     return () => {
         stopped = true;
         window.clearTimeout(timer);
-        target?.removeEventListener('click', onHit);
+        target?.removeEventListener("click", onHit);
     };
 }
