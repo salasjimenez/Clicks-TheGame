@@ -1,17 +1,17 @@
-import { MISSION_TEMPLATES } from '../data/missions.js';
-import { currentSeason } from '../data/seasons.js';
+import { MISSION_TEMPLATES } from "../data/missions.js";
+import { currentSeason } from "../data/seasons.js";
 const STATE_VERSION = 7;
 const EMPTY_COUNTERS = {
     manualClicks: 0,
     coinsEarned: 0,
     purchases: 0,
     minigames: 0,
-    criticalClicks: 0
+    criticalClicks: 0,
 };
 export function todayKey(date = new Date()) {
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
 }
 function seededRandom(seed) {
@@ -38,14 +38,14 @@ export function createDailyState(date = todayKey()) {
     const missions = selectDailyTemplates(date).map((mission) => ({
         ...mission,
         progress: 0,
-        claimed: false
+        claimed: false,
     }));
     return {
         date,
         missions,
         counters: { ...EMPTY_COUNTERS },
         streak: 0,
-        lastCompletedDate: ''
+        lastCompletedDate: "",
     };
 }
 function emptyUpgrades() {
@@ -57,7 +57,7 @@ function emptyUpgrades() {
         comboDrive: 0,
         overclock: 0,
         coinMagnet: 0,
-        offlineBattery: 0
+        offlineBattery: 0,
     };
 }
 function emptyDeepUpgrades() {
@@ -67,7 +67,7 @@ function emptyDeepUpgrades() {
         arcadeProtocol: 0,
         missionCompiler: 0,
         seasonAntenna: 0,
-        criticalMatrix: 0
+        criticalMatrix: 0,
     };
 }
 export function createInitialState() {
@@ -87,7 +87,7 @@ export function createInitialState() {
             level: 0,
             shards: 0,
             totalShardsEarned: 0,
-            upgrades: emptyDeepUpgrades()
+            upgrades: emptyDeepUpgrades(),
         },
         upgrades: emptyUpgrades(),
         unlockedAchievements: [],
@@ -108,14 +108,14 @@ export function createInitialState() {
             highestNeonRushScore: 0,
             seasonPoints: 0,
             guessWinStreak: 0,
-            highestGuessWinStreak: 0
+            highestGuessWinStreak: 0,
         },
         daily: createDailyState(),
         season: {
             id: season.id,
             enabled: true,
             points: 0,
-            lastDailyBonusDate: ''
+            lastDailyBonusDate: "",
         },
         activeEvent: null,
         nextEventAt: now + 120000,
@@ -124,36 +124,50 @@ export function createInitialState() {
         startedAt: now,
         lastSavedAt: now,
         background: {
-            palette: 'arcade',
-            mode: 'default',
-            preset: 'neonGrid',
+            palette: "arcade",
+            mode: "default",
+            preset: "neonGrid",
             videoPaused: false,
             imageUnlockNotified: false,
-            videoUnlockNotified: false
+            videoUnlockNotified: false,
         },
-        theme: 'dark',
-        soundEnabled: true
+        theme: "dark",
+        soundEnabled: true,
     };
 }
 function uiPalette(value) {
-    if (value === 'matrix' || value === 'violet' || value === 'sunset' || value === 'ice' || value === 'amber')
+    if (value === "matrix" ||
+        value === "violet" ||
+        value === "sunset" ||
+        value === "ice" ||
+        value === "amber")
         return value;
-    return 'arcade';
+    return "arcade";
 }
 function backgroundMode(value) {
-    return value === 'preset' || value === 'customImage' || value === 'customVideo' ? value : 'default';
+    return value === "preset" ||
+        value === "customImage" ||
+        value === "customVideo"
+        ? value
+        : "default";
 }
 function backgroundPreset(value) {
-    return value === 'synthSunset' || value === 'cyberCircuit' ? value : 'neonGrid';
+    return value === "synthSunset" || value === "cyberCircuit"
+        ? value
+        : "neonGrid";
 }
 function numeric(value, fallback = 0) {
-    return typeof value === 'number' && Number.isFinite(value) ? Math.max(0, value) : fallback;
+    return typeof value === "number" && Number.isFinite(value)
+        ? Math.max(0, value)
+        : fallback;
 }
 function integer(value, fallback = 0) {
     return Math.floor(numeric(value, fallback));
 }
 function upgradeRecord(value) {
-    const source = typeof value === 'object' && value ? value : {};
+    const source = typeof value === "object" && value
+        ? value
+        : {};
     return {
         autoClicker: integer(source.autoClicker),
         clickMultiplier: integer(source.clickMultiplier),
@@ -162,23 +176,25 @@ function upgradeRecord(value) {
         comboDrive: integer(source.comboDrive),
         overclock: integer(source.overclock),
         coinMagnet: integer(source.coinMagnet),
-        offlineBattery: integer(source.offlineBattery)
+        offlineBattery: integer(source.offlineBattery),
     };
 }
 function deepUpgradeRecord(value) {
-    const source = typeof value === 'object' && value ? value : {};
+    const source = typeof value === "object" && value
+        ? value
+        : {};
     return {
         coreEcho: integer(source.coreEcho),
         timeDilation: integer(source.timeDilation),
         arcadeProtocol: integer(source.arcadeProtocol),
         missionCompiler: integer(source.missionCompiler),
         seasonAntenna: integer(source.seasonAntenna),
-        criticalMatrix: integer(source.criticalMatrix)
+        criticalMatrix: integer(source.criticalMatrix),
     };
 }
 export function normalizeState(value) {
     const fresh = createInitialState();
-    if (!value || typeof value !== 'object')
+    if (!value || typeof value !== "object")
         return fresh;
     const source = value;
     const previousVersion = integer(source.version);
@@ -191,7 +207,9 @@ export function normalizeState(value) {
         version: STATE_VERSION,
         coins: numeric(source.coins),
         lifetimeCoins: numeric(source.lifetimeCoins),
-        totalClicks: previousVersion > 0 && previousVersion < 4 ? integer(source.manualClicks) : integer(source.totalClicks),
+        totalClicks: previousVersion > 0 && previousVersion < 4
+            ? integer(source.manualClicks)
+            : integer(source.totalClicks),
         manualClicks: integer(source.manualClicks),
         combo: integer(source.combo),
         comboExpiresAt: numeric(source.comboExpiresAt),
@@ -201,11 +219,13 @@ export function normalizeState(value) {
             level: integer(source.deepPrestige?.level),
             shards: integer(source.deepPrestige?.shards),
             totalShardsEarned: integer(source.deepPrestige?.totalShardsEarned),
-            upgrades: deepUpgradeRecord(source.deepPrestige?.upgrades)
+            upgrades: deepUpgradeRecord(source.deepPrestige?.upgrades),
         },
         upgrades: upgradeRecord(source.upgrades),
         unlockedAchievements: Array.isArray(source.unlockedAchievements)
-            ? [...new Set(source.unlockedAchievements.filter((id) => typeof id === 'string'))]
+            ? [
+                ...new Set(source.unlockedAchievements.filter((id) => typeof id === "string")),
+            ]
             : [],
         stats: {
             highestCoins: numeric(source.stats?.highestCoins),
@@ -224,9 +244,11 @@ export function normalizeState(value) {
             highestNeonRushScore: integer(source.stats?.highestNeonRushScore),
             seasonPoints: integer(source.stats?.seasonPoints),
             guessWinStreak: integer(source.stats?.guessWinStreak),
-            highestGuessWinStreak: integer(source.stats?.highestGuessWinStreak)
+            highestGuessWinStreak: integer(source.stats?.highestGuessWinStreak),
         },
-        activeEvent: source.activeEvent && typeof source.activeEvent === 'object' ? source.activeEvent : null,
+        activeEvent: source.activeEvent && typeof source.activeEvent === "object"
+            ? source.activeEvent
+            : null,
         nextEventAt: numeric(source.nextEventAt, Date.now() + 120000),
         turboUntil: numeric(source.turboUntil),
         playSeconds: numeric(source.playSeconds),
@@ -238,16 +260,18 @@ export function normalizeState(value) {
             preset: backgroundPreset(sourceBackground?.preset),
             videoPaused: Boolean(sourceBackground?.videoPaused),
             imageUnlockNotified: Boolean(sourceBackground?.imageUnlockNotified),
-            videoUnlockNotified: Boolean(sourceBackground?.videoUnlockNotified)
+            videoUnlockNotified: Boolean(sourceBackground?.videoUnlockNotified),
         },
-        theme: 'dark',
+        theme: "dark",
         soundEnabled: source.soundEnabled !== false,
         season: {
             id: seasonDefinition.id,
             enabled: sourceSeason?.enabled !== false,
             points: sameSeason ? integer(sourceSeason?.points) : 0,
-            lastDailyBonusDate: sameSeason && typeof sourceSeason?.lastDailyBonusDate === 'string' ? sourceSeason.lastDailyBonusDate : ''
-        }
+            lastDailyBonusDate: sameSeason && typeof sourceSeason?.lastDailyBonusDate === "string"
+                ? sourceSeason.lastDailyBonusDate
+                : "",
+        },
     };
     const daily = source.daily;
     if (daily && daily.date === todayKey() && Array.isArray(daily.missions)) {
@@ -256,23 +280,28 @@ export function normalizeState(value) {
             missions: daily.missions.map((mission) => ({
                 ...mission,
                 progress: numeric(mission.progress),
-                claimed: Boolean(mission.claimed)
+                claimed: Boolean(mission.claimed),
             })),
             counters: {
                 manualClicks: integer(daily.counters?.manualClicks),
                 coinsEarned: numeric(daily.counters?.coinsEarned),
                 purchases: integer(daily.counters?.purchases),
                 minigames: integer(daily.counters?.minigames),
-                criticalClicks: integer(daily.counters?.criticalClicks)
+                criticalClicks: integer(daily.counters?.criticalClicks),
             },
             streak: integer(daily.streak),
-            lastCompletedDate: typeof daily.lastCompletedDate === 'string' ? daily.lastCompletedDate : ''
+            lastCompletedDate: typeof daily.lastCompletedDate === "string"
+                ? daily.lastCompletedDate
+                : "",
         };
     }
     else {
         const replacement = createDailyState();
         replacement.streak = integer(daily?.streak);
-        replacement.lastCompletedDate = typeof daily?.lastCompletedDate === 'string' ? daily.lastCompletedDate : '';
+        replacement.lastCompletedDate =
+            typeof daily?.lastCompletedDate === "string"
+                ? daily.lastCompletedDate
+                : "";
         state.daily = replacement;
     }
     state.stats.highestCoins = Math.max(state.stats.highestCoins, state.coins);

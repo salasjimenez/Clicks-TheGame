@@ -32,19 +32,21 @@ export function imageLabMarkup() {
     </div>`;
 }
 export function mountImageLab(root) {
-    const input = root.querySelector('#image-source');
-    const preview = root.querySelector('#image-preview');
-    const previewShell = root.querySelector('#image-preview-shell');
-    const fileName = root.querySelector('#image-file-name');
-    const fileData = root.querySelector('#image-file-data');
-    const status = root.querySelector('#image-lab-status');
-    const quality = root.querySelector('#image-quality');
-    const qualityValue = root.querySelector('#image-quality-value');
-    const convert = root.querySelector('#image-convert');
-    const formatButtons = [...root.querySelectorAll('[data-image-format]')];
+    const input = root.querySelector("#image-source");
+    const preview = root.querySelector("#image-preview");
+    const previewShell = root.querySelector("#image-preview-shell");
+    const fileName = root.querySelector("#image-file-name");
+    const fileData = root.querySelector("#image-file-data");
+    const status = root.querySelector("#image-lab-status");
+    const quality = root.querySelector("#image-quality");
+    const qualityValue = root.querySelector("#image-quality-value");
+    const convert = root.querySelector("#image-convert");
+    const formatButtons = [
+        ...root.querySelectorAll("[data-image-format]"),
+    ];
     let file = null;
-    let format = 'image/png';
-    let previewUrl = '';
+    let format = "image/png";
+    let previewUrl = "";
     let disposed = false;
     const setStatus = (text, tone) => {
         if (!status)
@@ -56,7 +58,7 @@ export function mountImageLab(root) {
         if (!previewUrl)
             return;
         URL.revokeObjectURL(previewUrl);
-        previewUrl = '';
+        previewUrl = "";
     };
     const onQuality = () => {
         if (quality && qualityValue)
@@ -67,21 +69,21 @@ export function mountImageLab(root) {
         if (!(button instanceof HTMLButtonElement))
             return;
         const selected = button.dataset.imageFormat;
-        if (selected !== 'png' && selected !== 'jpeg' && selected !== 'webp')
+        if (selected !== "png" && selected !== "jpeg" && selected !== "webp")
             return;
         format = `image/${selected}`;
-        formatButtons.forEach((item) => item.classList.toggle('is-active', item === button));
+        formatButtons.forEach((item) => item.classList.toggle("is-active", item === button));
     };
     const onFile = async () => {
         const selected = input?.files?.[0] ?? null;
         if (!selected)
             return;
-        if (!selected.type.startsWith('image/')) {
-            setStatus('El archivo seleccionado no es una imagen compatible.', 'danger');
+        if (!selected.type.startsWith("image/")) {
+            setStatus("El archivo seleccionado no es una imagen compatible.", "danger");
             return;
         }
         if (selected.size > MAX_FILE_BYTES) {
-            setStatus('La imagen supera el límite local de 25 MB.', 'warning');
+            setStatus("La imagen supera el límite local de 25 MB.", "warning");
             return;
         }
         file = selected;
@@ -101,67 +103,70 @@ export function mountImageLab(root) {
                 fileData.textContent = `${preview.naturalWidth} × ${preview.naturalHeight} · ${formatBytes(selected.size)}`;
             if (convert)
                 convert.disabled = false;
-            setStatus('Imagen lista para convertir localmente.', 'success');
+            setStatus("Imagen lista para convertir localmente.", "success");
         }
         catch {
             file = null;
             if (convert)
                 convert.disabled = true;
-            setStatus('El navegador no pudo leer esta imagen.', 'danger');
+            setStatus("El navegador no pudo leer esta imagen.", "danger");
         }
     };
     const onConvert = async () => {
         if (!file || !convert)
             return;
         convert.disabled = true;
-        setStatus('Procesando localmente...', 'info');
+        setStatus("Procesando localmente...", "info");
         try {
             const bitmap = await createImageBitmap(file);
-            const canvas = document.createElement('canvas');
+            const canvas = document.createElement("canvas");
             canvas.width = bitmap.width;
             canvas.height = bitmap.height;
-            const context = canvas.getContext('2d');
+            const context = canvas.getContext("2d");
             if (!context)
-                throw new Error('canvas-context');
-            if (format === 'image/jpeg') {
-                context.fillStyle = '#ffffff';
+                throw new Error("canvas-context");
+            if (format === "image/jpeg") {
+                context.fillStyle = "#ffffff";
                 context.fillRect(0, 0, canvas.width, canvas.height);
             }
             context.drawImage(bitmap, 0, 0);
             bitmap.close();
             const outputQuality = quality ? Number(quality.value) / 100 : 0.92;
             const blob = await new Promise((resolve, reject) => {
-                canvas.toBlob((result) => result ? resolve(result) : reject(new Error('blob')), format, outputQuality);
+                canvas.toBlob((result) => (result ? resolve(result) : reject(new Error("blob"))), format, outputQuality);
             });
-            const extension = format === 'image/jpeg' ? 'jpg' : format.split('/')[1] ?? 'png';
-            const baseName = file.name.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_-]+/g, '-').replace(/^-+|-+$/g, '') || 'imagen';
+            const extension = format === "image/jpeg" ? "jpg" : (format.split("/")[1] ?? "png");
+            const baseName = file.name
+                .replace(/\.[^.]+$/, "")
+                .replace(/[^a-zA-Z0-9_-]+/g, "-")
+                .replace(/^-+|-+$/g, "") || "imagen";
             const outputUrl = URL.createObjectURL(blob);
-            const link = document.createElement('a');
+            const link = document.createElement("a");
             link.href = outputUrl;
             link.download = `${baseName}.${extension}`;
             link.click();
             window.setTimeout(() => URL.revokeObjectURL(outputUrl), 0);
-            setStatus(`Conversión completada: ${extension.toUpperCase()} · ${formatBytes(blob.size)}.`, 'success');
+            setStatus(`Conversión completada: ${extension.toUpperCase()} · ${formatBytes(blob.size)}.`, "success");
         }
         catch {
-            setStatus('No fue posible convertir esta imagen en el navegador.', 'danger');
+            setStatus("No fue posible convertir esta imagen en el navegador.", "danger");
         }
         finally {
             if (!disposed)
                 convert.disabled = !file;
         }
     };
-    input?.addEventListener('change', onFile);
-    quality?.addEventListener('input', onQuality);
-    formatButtons.forEach((button) => button.addEventListener('click', onFormat));
-    convert?.addEventListener('click', onConvert);
+    input?.addEventListener("change", onFile);
+    quality?.addEventListener("input", onQuality);
+    formatButtons.forEach((button) => button.addEventListener("click", onFormat));
+    convert?.addEventListener("click", onConvert);
     return () => {
         disposed = true;
         revokePreview();
-        input?.removeEventListener('change', onFile);
-        quality?.removeEventListener('input', onQuality);
-        formatButtons.forEach((button) => button.removeEventListener('click', onFormat));
-        convert?.removeEventListener('click', onConvert);
+        input?.removeEventListener("change", onFile);
+        quality?.removeEventListener("input", onQuality);
+        formatButtons.forEach((button) => button.removeEventListener("click", onFormat));
+        convert?.removeEventListener("click", onConvert);
     };
 }
 function formatBytes(bytes) {

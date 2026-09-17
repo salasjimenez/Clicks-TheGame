@@ -1,0 +1,678 @@
+/* ===== CLICK! RESPONSIVE V2.9 - START ===== */
+/* Safe override: append at the end of src/styles.css. */
+
+.arcade-shell,
+.hud-bar,
+.hud-stats,
+.hud-actions,
+.arcade-layout,
+.orbital-sidebar,
+.playfield,
+.machine-stage,
+.goal-console,
+.quick-console,
+.modal-game-panel {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.arcade-layout > *,
+.hud-bar > *,
+.playfield > * {
+  min-width: 0;
+}
+
+/* Phone compact: 320-430px */
+@media (max-width: 430px) {
+  html,
+  body {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .arcade-shell {
+    width: calc(100% - 8px) !important;
+    min-height: calc(100dvh - 8px) !important;
+    margin: 4px auto 10px !important;
+    padding: 6px !important;
+    border-radius: 14px !important;
+  }
+
+  .hud-bar {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    grid-template-areas:
+      "brand actions"
+      "stats stats";
+    gap: 7px !important;
+    min-height: 0 !important;
+    padding: 8px !important;
+    border-radius: 11px !important;
+  }
+
+  .arcade-brand {
+    grid-area: brand;
+    min-width: 0;
+    gap: 7px !important;
+  }
+
+  .brand-cabinet {
+    width: 36px !important;
+    height: 36px !important;
+    flex: 0 0 36px;
+    font-size: 15px !important;
+  }
+
+  .brand-copy strong {
+    font-size: 17px !important;
+    letter-spacing: 0.5px !important;
+  }
+
+  .brand-copy small {
+    font-size: 7px !important;
+    letter-spacing: 0.8px !important;
+  }
+
+  .hud-actions {
+    grid-area: actions;
+    gap: 5px !important;
+  }
+
+  .hud-clock {
+    display: none !important;
+  }
+
+  .round-action {
+    width: 34px !important;
+    height: 34px !important;
+  }
+
+  .round-action svg {
+    width: 17px !important;
+    height: 17px !important;
+  }
+
+  .hud-stats {
+    grid-area: stats;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 5px !important;
+    width: 100% !important;
+    overflow: visible !important;
+  }
+
+  .hud-stat {
+    min-width: 0 !important;
+    min-height: 43px !important;
+    padding: 5px 4px !important;
+    gap: 4px !important;
+  }
+
+  .hud-icon {
+    font-size: 15px !important;
+  }
+
+  .hud-stat small {
+    font-size: 6px !important;
+    letter-spacing: 0.35px !important;
+  }
+
+  .hud-stat strong {
+    font-size: 11px !important;
+  }
+
+  .arcade-layout {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 8px !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    padding: 8px 0 4px !important;
+  }
+
+  .orbital-sidebar {
+    position: relative !important;
+    inset: auto !important;
+    display: flex !important;
+    align-self: stretch !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    gap: 7px !important;
+    padding: 7px 2px 8px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: x proximity;
+    scrollbar-width: thin;
+    transform: none !important;
+  }
+
+  .sidebar-rail {
+    display: none !important;
+  }
+
+  .orb-button,
+  .orb-button:nth-of-type(2n) {
+    flex: 0 0 42px !important;
+    width: 42px !important;
+    height: 42px !important;
+    margin: 0 !important;
+    scroll-snap-align: start;
+  }
+
+  .orb-button svg {
+    width: 19px !important;
+    height: 19px !important;
+  }
+
+  .orb-emoji {
+    top: -4px !important;
+    right: -4px !important;
+    width: 18px !important;
+    height: 18px !important;
+    font-size: 9px !important;
+  }
+
+  .orb-label {
+    display: none !important;
+  }
+
+  .orb-badge {
+    max-width: 34px;
+    padding: 1px 3px !important;
+    font-size: 7px !important;
+  }
+
+  .playfield {
+    grid-column: auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 8px 4px !important;
+    border-right: 0 !important;
+    overflow: visible !important;
+  }
+
+  .event-banner {
+    width: 100% !important;
+    grid-template-columns: auto minmax(0, 1fr) !important;
+    gap: 6px !important;
+    padding: 7px 8px !important;
+  }
+
+  .event-banner time {
+    grid-column: 1 / -1;
+    justify-self: end;
+  }
+
+  .marquee-sign {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto 8px !important;
+    padding-inline: 8px !important;
+    transform: none !important;
+  }
+
+  .marquee-sign strong {
+    font-size: clamp(24px, 11vw, 38px) !important;
+  }
+
+  .marquee-sign small {
+    font-size: clamp(6px, 2.2vw, 9px) !important;
+    letter-spacing: 0.6px !important;
+  }
+
+  .machine-stage {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 390px !important;
+    padding: 8px 0 4px !important;
+    overflow: visible !important;
+  }
+
+  .click-machine {
+    width: min(72vw, 248px) !important;
+    max-width: 248px !important;
+    aspect-ratio: 1 / 1 !important;
+    margin-inline: auto !important;
+  }
+
+  .click-button {
+    width: 58% !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1 !important;
+  }
+
+  .click-button strong {
+    font-size: clamp(20px, 8vw, 30px) !important;
+  }
+
+  .click-button small {
+    font-size: clamp(7px, 2.5vw, 10px) !important;
+  }
+
+  .keyboard-hint {
+    margin-top: 4px !important;
+  }
+
+  .keyboard-hint span {
+    display: none !important;
+  }
+
+  .goal-console,
+  .quick-console {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .goal-console {
+    padding: 9px !important;
+  }
+
+  .goal-console-head {
+    gap: 6px !important;
+  }
+
+  .goal-console-head strong {
+    max-width: 52%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .quick-console {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 5px !important;
+  }
+
+  .quick-console button {
+    min-width: 0 !important;
+    padding: 7px 3px !important;
+  }
+
+  .quick-console small {
+    font-size: 6px !important;
+    letter-spacing: 0.3px !important;
+  }
+
+  .quick-console strong {
+    font-size: 9px !important;
+  }
+
+  .modal-game-panel,
+  .modal-panel-heading,
+  .prestige-metrics,
+  .deep-prestige-metrics,
+  .deep-upgrade-grid,
+  .mission-grid,
+  .store-grid,
+  .achievement-grid,
+  .stats-grid {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .deep-prestige-metrics,
+  .deep-upgrade-grid,
+  .mission-grid,
+  .store-grid,
+  .achievement-grid,
+  .stats-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+/* Phone: 431-767px */
+@media (min-width: 431px) and (max-width: 767px) {
+  .arcade-shell {
+    width: calc(100% - 12px) !important;
+    min-height: calc(100dvh - 12px) !important;
+    margin: 6px auto 12px !important;
+    padding: 8px !important;
+    border-radius: 16px !important;
+  }
+
+  .hud-bar {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    grid-template-areas:
+      "brand actions"
+      "stats stats";
+    gap: 8px !important;
+    padding: 9px !important;
+  }
+
+  .arcade-brand { grid-area: brand; }
+  .hud-actions { grid-area: actions; }
+
+  .hud-stats {
+    grid-area: stats;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    width: 100% !important;
+    overflow: visible !important;
+  }
+
+  .hud-stat {
+    min-width: 0 !important;
+    min-height: 46px !important;
+    padding: 5px !important;
+    gap: 4px !important;
+  }
+
+  .hud-stat small { font-size: 6px !important; }
+  .hud-stat strong { font-size: clamp(10px, 2.2vw, 13px) !important; }
+  .hud-icon { font-size: 16px !important; }
+  .hud-clock { display: none !important; }
+
+  .round-action {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  .arcade-layout {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 9px !important;
+    min-height: 0 !important;
+    padding: 10px 0 6px !important;
+  }
+
+  .orbital-sidebar {
+    position: relative !important;
+    inset: auto !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    gap: 8px !important;
+    padding: 8px 4px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scroll-snap-type: x proximity;
+    transform: none !important;
+  }
+
+  .sidebar-rail { display: none !important; }
+
+  .orb-button,
+  .orb-button:nth-of-type(2n) {
+    flex: 0 0 48px !important;
+    width: 48px !important;
+    height: 48px !important;
+    margin: 0 !important;
+    scroll-snap-align: start;
+  }
+
+  .orb-button svg {
+    width: 21px !important;
+    height: 21px !important;
+  }
+
+  .orb-label { display: none !important; }
+
+  .playfield {
+    grid-column: auto !important;
+    width: 100% !important;
+    padding-inline: 6px !important;
+    border-right: 0 !important;
+  }
+
+  .machine-stage {
+    min-height: 450px !important;
+  }
+
+  .click-machine {
+    width: min(58vw, 310px) !important;
+    max-width: 310px !important;
+  }
+
+  .click-button {
+    width: 60% !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1 !important;
+  }
+
+  .quick-console {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .deep-prestige-metrics,
+  .deep-upgrade-grid,
+  .mission-grid,
+  .store-grid,
+  .achievement-grid,
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)) !important;
+  }
+}
+
+/* Tablet: 768-1024px */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .arcade-shell {
+    width: calc(100% - 20px) !important;
+    margin: 10px auto !important;
+    padding: 12px !important;
+  }
+
+  .hud-bar {
+    grid-template-columns: minmax(150px, 0.8fr) minmax(0, 2.2fr) auto !important;
+    gap: 10px !important;
+    padding: 10px 12px !important;
+  }
+
+  .hud-stats {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+  }
+
+  .hud-stat {
+    min-width: 0 !important;
+    padding-inline: 5px !important;
+  }
+
+  .hud-stat small { font-size: 6px !important; }
+  .hud-stat strong { font-size: 12px !important; }
+  .hud-clock { display: none !important; }
+
+  .arcade-layout {
+    grid-template-columns: 82px minmax(0, 1fr) !important;
+    gap: 12px !important;
+    min-height: calc(100dvh - 160px) !important;
+    padding: 16px 0 8px !important;
+  }
+
+  .orbital-sidebar {
+    gap: 10px !important;
+    min-height: 0 !important;
+    padding-top: 4px !important;
+  }
+
+  .orb-button,
+  .orb-button:nth-of-type(2n) {
+    width: 58px !important;
+    height: 58px !important;
+    margin-left: 0 !important;
+  }
+
+  .orb-button svg {
+    width: 23px !important;
+    height: 23px !important;
+  }
+
+  .orb-label {
+    font-size: 7px !important;
+  }
+
+  .playfield {
+    width: 100% !important;
+    min-width: 0 !important;
+    border-right: 0 !important;
+  }
+
+  .machine-stage {
+    min-height: 500px !important;
+  }
+
+  .click-machine {
+    width: min(48vw, 360px) !important;
+    max-width: 360px !important;
+  }
+
+  .click-button {
+    width: 61% !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1 !important;
+  }
+
+  .deep-prestige-metrics,
+  .deep-upgrade-grid,
+  .mission-grid,
+  .store-grid,
+  .achievement-grid,
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+/* Desktop: 1025-1599px */
+@media (min-width: 1025px) and (max-width: 1599px) {
+  .arcade-shell {
+    width: min(1480px, calc(100% - 28px)) !important;
+    margin: 14px auto !important;
+    padding: 14px !important;
+  }
+
+  .hud-bar {
+    grid-template-columns: minmax(170px, 0.75fr) minmax(0, 2.4fr) auto !important;
+    gap: 14px !important;
+  }
+
+  .hud-stats {
+    grid-template-columns: repeat(5, minmax(78px, 1fr)) !important;
+  }
+
+  .arcade-layout {
+    grid-template-columns: 102px minmax(0, 1fr) !important;
+    gap: 16px !important;
+    padding: 20px 0 10px !important;
+  }
+
+  .orbital-sidebar {
+    min-height: 0 !important;
+  }
+
+  .orb-button,
+  .orb-button:nth-of-type(2n) {
+    width: 70px !important;
+    height: 70px !important;
+    margin-left: 0 !important;
+  }
+
+  .playfield {
+    width: 100% !important;
+    border-right: 0 !important;
+  }
+
+  .click-machine {
+    width: min(34vw, 410px) !important;
+    max-width: 410px !important;
+  }
+}
+
+/* Desktop wide: >=1600px */
+@media (min-width: 1600px) {
+  .arcade-shell {
+    width: min(1760px, calc(100% - 48px)) !important;
+    margin: 24px auto !important;
+    padding: 20px !important;
+  }
+
+  .hud-bar {
+    grid-template-columns: minmax(200px, 0.8fr) minmax(0, 2.5fr) minmax(210px, auto) !important;
+    gap: 20px !important;
+  }
+
+  .arcade-layout {
+    grid-template-columns: 120px minmax(0, 1fr) !important;
+    gap: 22px !important;
+    padding: 26px 4px 14px !important;
+  }
+
+  .orbital-sidebar {
+    min-height: 0 !important;
+  }
+
+  .orb-button,
+  .orb-button:nth-of-type(2n) {
+    width: 82px !important;
+    height: 82px !important;
+    margin-left: 0 !important;
+  }
+
+  .click-machine {
+    width: min(30vw, 460px) !important;
+    max-width: 460px !important;
+  }
+}
+
+/* Independent orientation axis. No alternate width breakpoint. */
+@media (orientation: landscape) {
+  .arcade-shell {
+    min-height: calc(100dvh - 8px) !important;
+  }
+
+  .hud-bar {
+    min-height: 64px !important;
+  }
+
+  .arcade-layout {
+    min-height: 0 !important;
+    padding-top: 8px !important;
+  }
+
+  .machine-stage {
+    min-height: clamp(280px, 68dvh, 520px) !important;
+  }
+
+  .click-machine {
+    width: min(42vw, 58dvh, 420px) !important;
+  }
+
+  .keyboard-hint {
+    margin-block: 3px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbital-sidebar {
+    scroll-behavior: auto !important;
+  }
+}
+/* ===== CLICK! RESPONSIVE V2.9 - END ===== */
+
+/* v2.9 lower status banner */
+.ranking-coming-soon {
+  width: min(100%, 560px);
+  margin: 8px auto 14px;
+  padding: 8px 14px;
+  border: 1px solid color-mix(in srgb, var(--cyan, #00f5ff) 70%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--purple, #7a5cff) 12%, rgba(5, 6, 20, 0.9));
+  box-shadow: 0 0 18px color-mix(in srgb, var(--cyan, #00f5ff) 18%, transparent);
+  color: var(--cyan, #00f5ff);
+  text-align: center;
+  font-size: clamp(8px, 2vw, 11px);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 430px) {
+  .ranking-coming-soon {
+    width: calc(100% - 12px);
+    margin-block: 6px 10px;
+    padding: 7px 8px;
+    letter-spacing: 0.08em;
+  }
+}

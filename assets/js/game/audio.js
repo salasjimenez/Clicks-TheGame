@@ -3,13 +3,13 @@ export class GameAudio {
     playClick(enabled, critical) {
         if (!enabled)
             return;
-        this.tone(critical ? 760 : 420, critical ? 0.09 : 0.045, critical ? 0.08 : 0.035, 'sine');
+        this.tone(critical ? 760 : 420, critical ? 0.09 : 0.045, critical ? 0.08 : 0.035, "sine");
     }
     playSuccess(enabled) {
         if (!enabled)
             return;
-        this.tone(520, 0.08, 0.05, 'triangle');
-        window.setTimeout(() => this.tone(760, 0.11, 0.045, 'triangle'), 70);
+        this.tone(520, 0.08, 0.05, "triangle");
+        window.setTimeout(() => this.tone(760, 0.11, 0.045, "triangle"), 70);
     }
     tone(frequency, duration, volume, type) {
         try {

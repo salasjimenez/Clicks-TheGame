@@ -1,14 +1,16 @@
 {
   "name": "clicks-the-game",
-  "version": "2.5.1",
+  "version": "2.9.0",
   "private": true,
   "type": "module",
   "scripts": {
     "clean": "node scripts/clean.mjs",
     "build": "npm run clean && tsc && node scripts/copy-static.mjs",
-    "check": "tsc --noEmit",
+    "check": "tsc --noEmit && node scripts/test-v29.mjs",
     "dev": "npm run build && node scripts/serve.mjs",
-    "serve": "node scripts/serve.mjs"
+    "serve": "node scripts/serve.mjs",
+    "test": "node scripts/test-v29.mjs",
+    "assets:optimize": "node scripts/optimize-v29-assets.mjs"
   },
   "devDependencies": {
     "typescript": "5.9.2"

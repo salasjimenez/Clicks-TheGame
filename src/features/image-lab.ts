@@ -1,4 +1,4 @@
-type ImageOutputFormat = 'image/png' | 'image/jpeg' | 'image/webp';
+type ImageOutputFormat = "image/png" | "image/jpeg" | "image/webp";
 
 const MAX_FILE_BYTES = 25 * 1024 * 1024;
 
@@ -36,19 +36,23 @@ export function imageLabMarkup(): string {
 }
 
 export function mountImageLab(root: HTMLElement): () => void {
-  const input = root.querySelector<HTMLInputElement>('#image-source');
-  const preview = root.querySelector<HTMLImageElement>('#image-preview');
-  const previewShell = root.querySelector<HTMLElement>('#image-preview-shell');
-  const fileName = root.querySelector<HTMLElement>('#image-file-name');
-  const fileData = root.querySelector<HTMLElement>('#image-file-data');
-  const status = root.querySelector<HTMLElement>('#image-lab-status');
-  const quality = root.querySelector<HTMLInputElement>('#image-quality');
-  const qualityValue = root.querySelector<HTMLOutputElement>('#image-quality-value');
-  const convert = root.querySelector<HTMLButtonElement>('#image-convert');
-  const formatButtons = [...root.querySelectorAll<HTMLButtonElement>('[data-image-format]')];
+  const input = root.querySelector<HTMLInputElement>("#image-source");
+  const preview = root.querySelector<HTMLImageElement>("#image-preview");
+  const previewShell = root.querySelector<HTMLElement>("#image-preview-shell");
+  const fileName = root.querySelector<HTMLElement>("#image-file-name");
+  const fileData = root.querySelector<HTMLElement>("#image-file-data");
+  const status = root.querySelector<HTMLElement>("#image-lab-status");
+  const quality = root.querySelector<HTMLInputElement>("#image-quality");
+  const qualityValue = root.querySelector<HTMLOutputElement>(
+    "#image-quality-value",
+  );
+  const convert = root.querySelector<HTMLButtonElement>("#image-convert");
+  const formatButtons = [
+    ...root.querySelectorAll<HTMLButtonElement>("[data-image-format]"),
+  ];
   let file: File | null = null;
-  let format: ImageOutputFormat = 'image/png';
-  let previewUrl = '';
+  let format: ImageOutputFormat = "image/png";
+  let previewUrl = "";
   let disposed = false;
 
   const setStatus = (text: string, tone: string): void => {
@@ -60,7 +64,7 @@ export function mountImageLab(root: HTMLElement): () => void {
   const revokePreview = (): void => {
     if (!previewUrl) return;
     URL.revokeObjectURL(previewUrl);
-    previewUrl = '';
+    previewUrl = "";
   };
 
   const onQuality = (): void => {
@@ -71,20 +75,26 @@ export function mountImageLab(root: HTMLElement): () => void {
     const button = event.currentTarget;
     if (!(button instanceof HTMLButtonElement)) return;
     const selected = button.dataset.imageFormat;
-    if (selected !== 'png' && selected !== 'jpeg' && selected !== 'webp') return;
+    if (selected !== "png" && selected !== "jpeg" && selected !== "webp")
+      return;
     format = `image/${selected}` as ImageOutputFormat;
-    formatButtons.forEach((item) => item.classList.toggle('is-active', item === button));
+    formatButtons.forEach((item) =>
+      item.classList.toggle("is-active", item === button),
+    );
   };
 
   const onFile = async (): Promise<void> => {
     const selected = input?.files?.[0] ?? null;
     if (!selected) return;
-    if (!selected.type.startsWith('image/')) {
-      setStatus('El archivo seleccionado no es una imagen compatible.', 'danger');
+    if (!selected.type.startsWith("image/")) {
+      setStatus(
+        "El archivo seleccionado no es una imagen compatible.",
+        "danger",
+      );
       return;
     }
     if (selected.size > MAX_FILE_BYTES) {
-      setStatus('La imagen supera el límite local de 25 MB.', 'warning');
+      setStatus("La imagen supera el límite local de 25 MB.", "warning");
       return;
     }
     file = selected;
@@ -97,65 +107,83 @@ export function mountImageLab(root: HTMLElement): () => void {
       if (disposed) return;
       previewShell.hidden = false;
       if (fileName) fileName.textContent = selected.name;
-      if (fileData) fileData.textContent = `${preview.naturalWidth} × ${preview.naturalHeight} · ${formatBytes(selected.size)}`;
+      if (fileData)
+        fileData.textContent = `${preview.naturalWidth} × ${preview.naturalHeight} · ${formatBytes(selected.size)}`;
       if (convert) convert.disabled = false;
-      setStatus('Imagen lista para convertir localmente.', 'success');
+      setStatus("Imagen lista para convertir localmente.", "success");
     } catch {
       file = null;
       if (convert) convert.disabled = true;
-      setStatus('El navegador no pudo leer esta imagen.', 'danger');
+      setStatus("El navegador no pudo leer esta imagen.", "danger");
     }
   };
 
   const onConvert = async (): Promise<void> => {
     if (!file || !convert) return;
     convert.disabled = true;
-    setStatus('Procesando localmente...', 'info');
+    setStatus("Procesando localmente...", "info");
     try {
       const bitmap = await createImageBitmap(file);
-      const canvas = document.createElement('canvas');
+      const canvas = document.createElement("canvas");
       canvas.width = bitmap.width;
       canvas.height = bitmap.height;
-      const context = canvas.getContext('2d');
-      if (!context) throw new Error('canvas-context');
-      if (format === 'image/jpeg') {
-        context.fillStyle = '#ffffff';
+      const context = canvas.getContext("2d");
+      if (!context) throw new Error("canvas-context");
+      if (format === "image/jpeg") {
+        context.fillStyle = "#ffffff";
         context.fillRect(0, 0, canvas.width, canvas.height);
       }
       context.drawImage(bitmap, 0, 0);
       bitmap.close();
       const outputQuality = quality ? Number(quality.value) / 100 : 0.92;
       const blob = await new Promise<Blob>((resolve, reject) => {
-        canvas.toBlob((result) => result ? resolve(result) : reject(new Error('blob')), format, outputQuality);
+        canvas.toBlob(
+          (result) => (result ? resolve(result) : reject(new Error("blob"))),
+          format,
+          outputQuality,
+        );
       });
-      const extension = format === 'image/jpeg' ? 'jpg' : format.split('/')[1] ?? 'png';
-      const baseName = file.name.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_-]+/g, '-').replace(/^-+|-+$/g, '') || 'imagen';
+      const extension =
+        format === "image/jpeg" ? "jpg" : (format.split("/")[1] ?? "png");
+      const baseName =
+        file.name
+          .replace(/\.[^.]+$/, "")
+          .replace(/[^a-zA-Z0-9_-]+/g, "-")
+          .replace(/^-+|-+$/g, "") || "imagen";
       const outputUrl = URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = outputUrl;
       link.download = `${baseName}.${extension}`;
       link.click();
       window.setTimeout(() => URL.revokeObjectURL(outputUrl), 0);
-      setStatus(`Conversión completada: ${extension.toUpperCase()} · ${formatBytes(blob.size)}.`, 'success');
+      setStatus(
+        `Conversión completada: ${extension.toUpperCase()} · ${formatBytes(blob.size)}.`,
+        "success",
+      );
     } catch {
-      setStatus('No fue posible convertir esta imagen en el navegador.', 'danger');
+      setStatus(
+        "No fue posible convertir esta imagen en el navegador.",
+        "danger",
+      );
     } finally {
       if (!disposed) convert.disabled = !file;
     }
   };
 
-  input?.addEventListener('change', onFile);
-  quality?.addEventListener('input', onQuality);
-  formatButtons.forEach((button) => button.addEventListener('click', onFormat));
-  convert?.addEventListener('click', onConvert);
+  input?.addEventListener("change", onFile);
+  quality?.addEventListener("input", onQuality);
+  formatButtons.forEach((button) => button.addEventListener("click", onFormat));
+  convert?.addEventListener("click", onConvert);
 
   return () => {
     disposed = true;
     revokePreview();
-    input?.removeEventListener('change', onFile);
-    quality?.removeEventListener('input', onQuality);
-    formatButtons.forEach((button) => button.removeEventListener('click', onFormat));
-    convert?.removeEventListener('click', onConvert);
+    input?.removeEventListener("change", onFile);
+    quality?.removeEventListener("input", onQuality);
+    formatButtons.forEach((button) =>
+      button.removeEventListener("click", onFormat),
+    );
+    convert?.removeEventListener("click", onConvert);
   };
 }
 
